@@ -89,6 +89,10 @@ export class ThermostatServerBase extends FeaturedBase {
       return {};
     }
 
+    // Ensure min <= max from HA (shouldn't happen but handle it)
+    const actualMin = Math.min(minSetpointLimit, maxSetpointLimit);
+    const actualMax = Math.max(minSetpointLimit, maxSetpointLimit);
+
     // Deadband is required when BOTH heating and cooling are supported,
     // regardless of autoMode feature
     const deadband =
@@ -96,29 +100,17 @@ export class ThermostatServerBase extends FeaturedBase {
         ? MINIMUM_DEADBAND_MATTER_UNITS
         : 0;
 
-    const minHeat = minSetpointLimit;
-    const maxHeat = maxSetpointLimit;
+    const minHeat = actualMin;
+    const maxHeat = actualMax;
 
-    let minCool = minSetpointLimit;
-    let maxCool = maxSetpointLimit;
+    let minCool = actualMin;
+    let maxCool = actualMax;
 
     // Apply clamping when BOTH heat & cool exist and deadband > 0
     // to satisfy Matter constraint: minHeat <= minCool - deadband
     if (deadband > 0 && this.features.heating && this.features.cooling) {
       minCool = Math.max(minCool, minHeat + deadband);
       maxCool = Math.max(maxCool, maxHeat + deadband);
-    }
-
-    // Validate the constraint before returning
-    if (
-      this.features.heating &&
-      this.features.cooling &&
-      deadband > 0 &&
-      minHeat > minCool - deadband
-    ) {
-      throw new Error(
-        `Thermostat constraint violation: minHeatSetpointLimit (${minHeat}) must be <= minCoolSetpointLimit (${minCool}) - minSetpointDeadBand (${deadband})`,
-      );
     }
 
     return {
