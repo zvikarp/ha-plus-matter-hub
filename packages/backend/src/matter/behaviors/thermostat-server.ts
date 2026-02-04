@@ -153,7 +153,7 @@ export class ThermostatServerBase extends FeaturedBase {
     const localTemperature = config
       .getCurrentTemperature(entity.state, this.agent)
       ?.celsius(true);
-    let targetHeatingTemperature =
+    const targetHeatingTemperature =
       config
         .getTargetHeatingTemperature(entity.state, this.agent)
         ?.celsius(true) ?? this.state.occupiedHeatingSetpoint;
@@ -166,11 +166,20 @@ export class ThermostatServerBase extends FeaturedBase {
     // Matter.js requires: occupiedCoolingSetpoint >= occupiedHeatingSetpoint + minSetpointDeadBand
     // This adjustment is necessary to prevent initialization failures when Home Assistant provides
     // setpoints that are too close together (less than 2°C apart).
-    if (this.features.heating && this.features.cooling && targetHeatingTemperature !== undefined && targetCoolingTemperature !== undefined) {
-      if (targetCoolingTemperature < targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS) {
+    if (
+      this.features.heating &&
+      this.features.cooling &&
+      targetHeatingTemperature !== undefined &&
+      targetCoolingTemperature !== undefined
+    ) {
+      if (
+        targetCoolingTemperature <
+        targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS
+      ) {
         // Adjust cooling setpoint to maintain deadband constraint
         // The adjusted value will be reflected in Matter but won't change the HA state
-        targetCoolingTemperature = targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS;
+        targetCoolingTemperature =
+          targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS;
       }
     }
 
