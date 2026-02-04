@@ -14,4 +14,7 @@ COPY package.tgz /install/package.tgz
 RUN npm install -g /install/package.tgz
 RUN rm -rf /install
 
+# Verify that the CLI is working and @ha-plus-matter-hub/common can be resolved
+RUN ha-plus-matter-hub --help > /dev/null && echo "✓ CLI verification passed"
+
 CMD exec ha-plus-matter-hub start
