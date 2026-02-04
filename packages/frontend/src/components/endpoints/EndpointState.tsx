@@ -1,7 +1,4 @@
-import {
-  ClusterId,
-  type EndpointData,
-} from "@ha-plus-matter-hub/common";
+import { ClusterId, type EndpointData } from "@ha-plus-matter-hub/common";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
