@@ -15,6 +15,10 @@ import { transactionIsOffline } from "../../utils/transaction-is-offline.js";
 
 const FeaturedBase = Base.with("Heating", "Cooling", "AutoMode");
 
+// Matter.js uses 0.01°C units, so 2°C = 200 hundredths
+// This deadband ensures heating and cooling setpoints don't overlap
+export const MINIMUM_DEADBAND_MATTER_UNITS = 200;
+
 export interface ThermostatRunningState {
   heat: boolean;
   cool: boolean;
@@ -85,10 +89,12 @@ export class ThermostatServerBase extends FeaturedBase {
       return {};
     }
 
-    // Matter uses 0.01°C units → 2°C = 200
     // Deadband is required when BOTH heating and cooling are supported,
     // regardless of autoMode feature
-    const deadband = this.features.heating && this.features.cooling ? 200 : 0;
+    const deadband =
+      this.features.heating && this.features.cooling
+        ? MINIMUM_DEADBAND_MATTER_UNITS
+        : 0;
 
     const minHeat = minSetpointLimit;
     const maxHeat = maxSetpointLimit;
