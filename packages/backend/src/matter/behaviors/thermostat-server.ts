@@ -84,9 +84,16 @@ export class ThermostatServerBase extends FeaturedBase {
     minSetpointLimit?: number,
     maxSetpointLimit?: number,
   ) {
-    // If HA didn't give us limits, don't publish any
+    // Only apply constraints if we have valid limits
+    // Otherwise, let the setpoints be set without explicit limits
     if (minSetpointLimit === undefined || maxSetpointLimit === undefined) {
-      return {};
+      // Deadband is still required when BOTH heating and cooling are supported
+      const deadband =
+        this.features.heating && this.features.cooling
+          ? MINIMUM_DEADBAND_MATTER_UNITS
+          : 0;
+
+      return deadband > 0 ? { minSetpointDeadBand: deadband } : {};
     }
 
     // Ensure min <= max from HA (shouldn't happen but handle it)
@@ -146,14 +153,26 @@ export class ThermostatServerBase extends FeaturedBase {
     const localTemperature = config
       .getCurrentTemperature(entity.state, this.agent)
       ?.celsius(true);
-    const targetHeatingTemperature =
+    let targetHeatingTemperature =
       config
         .getTargetHeatingTemperature(entity.state, this.agent)
         ?.celsius(true) ?? this.state.occupiedHeatingSetpoint;
-    const targetCoolingTemperature =
+    let targetCoolingTemperature =
       config
         .getTargetCoolingTemperature(entity.state, this.agent)
         ?.celsius(true) ?? this.state.occupiedCoolingSetpoint;
+
+    // Ensure setpoints respect the deadband constraint when both heating and cooling are supported
+    // Matter.js requires: occupiedCoolingSetpoint >= occupiedHeatingSetpoint + minSetpointDeadBand
+    // This adjustment is necessary to prevent initialization failures when Home Assistant provides
+    // setpoints that are too close together (less than 2°C apart).
+    if (this.features.heating && this.features.cooling && targetHeatingTemperature !== undefined && targetCoolingTemperature !== undefined) {
+      if (targetCoolingTemperature < targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS) {
+        // Adjust cooling setpoint to maintain deadband constraint
+        // The adjusted value will be reflected in Matter but won't change the HA state
+        targetCoolingTemperature = targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS;
+      }
+    }
 
     const systemMode = this.getSystemMode(entity);
     const runningMode = config.getRunningMode(entity.state, this.agent);
