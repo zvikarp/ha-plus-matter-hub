@@ -1,4 +1,4 @@
-import type { BridgeData } from "@home-assistant-matter-hub/common";
+import type { BridgeData } from "@ha-plus-matter-hub/common";
 import { Service } from "../../core/ioc/service.js";
 import type { Bridge } from "./bridge.js";
 

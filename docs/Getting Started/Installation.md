@@ -46,7 +46,7 @@ This repository builds a docker image for every release. You can simply run it b
 ```yaml
 services:
   matter-hub:
-    image: ghcr.io/t0bst4r/home-assistant-matter-hub:latest
+    image: ghcr.io/zvikarp/ha-plus-matter-hub:latest
     restart: unless-stopped
     network_mode: host
     environment: # more options can be found in the configuration section
@@ -55,7 +55,7 @@ services:
       - HAMH_LOG_LEVEL=info
       - HAMH_HTTP_PORT=8482
     volumes:
-      - $PWD/home-assistant-matter-hub:/data
+      - $PWD/ha-plus-matter-hub:/data
 ```
 
 Having that you can simply run `docker compose up -d` to start the container.
@@ -78,10 +78,10 @@ docker run -d \
   # default: 8482
   -e HAMH_HTTP_PORT=8482 \
   # recommended: persist the configuration and application data
-  -v $PWD/home-assistant-matter-hub:/data \
+  -v $PWD/ha-plus-matter-hub:/data \
   # required due to restrictions in matter
   --network=host \
-  ghcr.io/t0bst4r/home-assistant-matter-hub:latest
+  ghcr.io/zvikarp/ha-plus-matter-hub:latest
 ```
 
 See 2.3 for more configuration options.
@@ -93,13 +93,13 @@ Now you can go ahead and follow the [bridge configuration guide](./Bridge%20Conf
 If you want to install this application by hand, you simply need to run
 
 ```bash
-npm install -g home-assistant-matter-hub
+npm install -g ha-plus-matter-hub
 ```
 
 To start the application, run
 
 ```bash
-home-assistant-matter-hub start \
+ha-plus-matter-hub start \
   # required: the address of your home assistant instance
   # can be replaced with an environment variable: HAMH_HOME_ASSISTANT_URL
   --home-assistant-url="http://192.168.178.123:8123/" \
@@ -116,7 +116,7 @@ home-assistant-matter-hub start \
   --http-port=8482
 ```
 
-The application will store its data in `$HOME/.home-assistant-matter-hub`. You can configure the storage path by
+The application will store its data in `$HOME/.ha-plus-matter-hub`. You can configure the storage path by
 using the `--storage-location=/path/to/storage` option or `HAMH_STORAGE_STORAGE` environment variable.
 
 See 2.3 for more configuration options.
@@ -129,7 +129,7 @@ General app configuration is done using the command line interface or environmen
 are available:
 
 ```
-home-assistant-matter-hub start
+ha-plus-matter-hub start
 
 start the application
 

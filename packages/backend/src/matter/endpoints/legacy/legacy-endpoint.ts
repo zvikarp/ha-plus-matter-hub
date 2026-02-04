@@ -1,4 +1,4 @@
-import type { HomeAssistantEntityState } from "@home-assistant-matter-hub/common";
+import type { HomeAssistantEntityState } from "@ha-plus-matter-hub/common";
 import {
   DestroyedDependencyError,
   TransactionDestroyedError,

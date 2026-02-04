@@ -1,16 +1,16 @@
 {
-  "name": "home-assistant-matter-hub",
+  "name": "ha-plus-matter-hub",
   "description": "",
   "version": "0.0.0",
   "private": false,
   "type": "module",
   "bin": {
-    "home-assistant-matter-hub": "./dist/backend/cli.js"
+    "ha-plus-matter-hub": "./dist/backend/cli.js"
   },
   "author": {
-    "email": "t0bst4r@outlook.com",
-    "name": "t0bst4r",
-    "url": "https://github.com/t0bst4r"
+    "email": "info@zvikarp.com",
+    "name": "zvikarp",
+    "url": "https://github.com/zvikarp"
   },
   "keywords": [
     "home-assistant",
@@ -31,10 +31,10 @@
     "smart-home"
   ],
   "bugs": {
-    "url": "https://github.com/t0bst4r/home-assistant-matter-hub/issues"
+    "url": "https://github.com/zvikarp/ha-plus-matter-hub/issues"
   },
   "license": "Apache-2.0",
-  "repository": "github:t0bst4r/home-assistant-matter-hub",
+  "repository": "github:zvikarp/ha-plus-matter-hub",
   "scripts": {
     "cleanup": "npx rimraf node_modules dist pack LICENSE README.md",
     "build": "node build.js",
@@ -63,9 +63,9 @@
     "ws": "8.19.0"
   },
   "devDependencies": {
-    "@home-assistant-matter-hub/backend": "workspace:*",
-    "@home-assistant-matter-hub/frontend": "workspace:*",
-    "@home-assistant-matter-hub/common": "workspace:*",
+    "@ha-plus-matter-hub/backend": "workspace:*",
+    "@ha-plus-matter-hub/frontend": "workspace:*",
+    "@ha-plus-matter-hub/common": "workspace:*",
     "@types/lodash-es": "^4.17.12"
   },
   "nx": {

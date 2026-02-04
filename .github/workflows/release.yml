@@ -65,7 +65,7 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: package.tgz
-          path: apps/home-assistant-matter-hub/package.tgz
+          path: apps/ha-plus-matter-hub/package.tgz
       - name: Upload Documentation
         if: steps.release.outputs.release-version != ''
         uses: actions/upload-pages-artifact@v4
@@ -110,7 +110,7 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: package.tgz
-          path: apps/home-assistant-matter-hub/
+          path: apps/ha-plus-matter-hub/
           merge-multiple: true
 
       - name: Build Docker

@@ -14,4 +14,4 @@ COPY package.tgz /install/package.tgz
 RUN npm install -g /install/package.tgz
 RUN rm -rf /install
 
-CMD exec home-assistant-matter-hub start
+CMD exec ha-plus-matter-hub start

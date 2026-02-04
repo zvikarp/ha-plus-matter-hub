@@ -2,7 +2,7 @@ import type {
   HomeAssistantDeviceRegistry,
   HomeAssistantEntityRegistry,
   HomeAssistantMatcher,
-} from "@home-assistant-matter-hub/common";
+} from "@ha-plus-matter-hub/common";
 
 export function testMatchers(
   matcher: HomeAssistantMatcher[],

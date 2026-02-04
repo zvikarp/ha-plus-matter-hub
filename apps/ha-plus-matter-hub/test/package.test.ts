@@ -1,18 +1,18 @@
-import backend from "@home-assistant-matter-hub/backend/package.json" with {
+import backend from "@ha-plus-matter-hub/backend/package.json" with {
   type: "json",
 };
-import common from "@home-assistant-matter-hub/common/package.json" with {
+import common from "@ha-plus-matter-hub/common/package.json" with {
   type: "json",
 };
 import { mapValues, pickBy } from "lodash-es";
 import { describe, expect, it } from "vitest";
 import own from "../package.json" with { type: "json" };
 
-describe("home-assistant-matter-hub", () => {
+describe("ha-plus-matter-hub", () => {
   it("should include all necessary dependencies", () => {
     const expected = pickBy(
       { ...backend.dependencies, ...common.dependencies },
-      (_, key) => !key.startsWith("@home-assistant-matter-hub/"),
+      (_, key) => !key.startsWith("@ha-plus-matter-hub/"),
     );
     expect(own.dependencies).toEqual(expected);
   });

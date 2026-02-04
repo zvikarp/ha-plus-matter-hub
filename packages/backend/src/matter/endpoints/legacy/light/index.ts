@@ -1,7 +1,7 @@
 import {
   type LightDeviceAttributes,
   LightDeviceColorMode,
-} from "@home-assistant-matter-hub/common";
+} from "@ha-plus-matter-hub/common";
 import type { EndpointType } from "@matter/main";
 import type { HomeAssistantEntityBehavior } from "../../../behaviors/home-assistant-entity-behavior.js";
 import { ColorTemperatureLightType } from "./devices/color-temperature-light.js";
