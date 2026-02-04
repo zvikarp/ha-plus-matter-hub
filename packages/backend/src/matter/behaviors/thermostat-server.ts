@@ -76,6 +76,61 @@ export class ThermostatServerBase extends FeaturedBase {
     this.reactTo(homeAssistant.onChange, this.update);
   }
 
+  private buildSetpointLimits(
+    minSetpointLimit?: number,
+    maxSetpointLimit?: number,
+  ) {
+    // If HA didn't give us limits, don't publish any
+    if (minSetpointLimit === undefined || maxSetpointLimit === undefined) {
+      return {};
+    }
+
+    // Matter uses 0.01°C units → 2°C = 200
+    const deadband =
+      this.features.autoMode
+        ? 0
+        : this.features.heating && this.features.cooling
+          ? 200
+          : undefined;
+
+    const minHeat = minSetpointLimit;
+    const maxHeat = maxSetpointLimit;
+
+    let minCool = minSetpointLimit;
+    let maxCool = maxSetpointLimit;
+
+    // Only clamp when BOTH heat & cool exist and a deadband is required
+    if (
+      deadband !== undefined &&
+      deadband > 0 &&
+      this.features.heating &&
+      this.features.cooling
+    ) {
+      minCool = Math.max(minCool, minHeat + deadband);
+      maxCool = Math.max(maxCool, maxHeat + deadband);
+    }
+
+    return {
+      ...(this.features.heating
+        ? {
+            minHeatSetpointLimit: minHeat,
+            maxHeatSetpointLimit: maxHeat,
+            absMinHeatSetpointLimit: minHeat,
+            absMaxHeatSetpointLimit: maxHeat,
+          }
+        : {}),
+      ...(this.features.cooling
+        ? {
+            minCoolSetpointLimit: minCool,
+            maxCoolSetpointLimit: maxCool,
+            absMinCoolSetpointLimit: minCool,
+            absMaxCoolSetpointLimit: maxCool,
+          }
+        : {}),
+      ...(deadband !== undefined ? { minSetpointDeadBand: deadband } : {}),
+    };
+  }
+
   private update(entity: HomeAssistantEntityInformation) {
     const config = this.state.config;
     const minSetpointLimit = config
@@ -84,6 +139,10 @@ export class ThermostatServerBase extends FeaturedBase {
     const maxSetpointLimit = config
       .getMaxTemperature(entity.state, this.agent)
       ?.celsius(true);
+    const limits = this.buildSetpointLimits(
+      minSetpointLimit,
+      maxSetpointLimit,
+    );
     const localTemperature = config
       .getCurrentTemperature(entity.state, this.agent)
       ?.celsius(true);
@@ -93,39 +152,25 @@ export class ThermostatServerBase extends FeaturedBase {
         ?.celsius(true) ?? this.state.occupiedHeatingSetpoint;
     const targetCoolingTemperature =
       config
-        .getTargetHeatingTemperature(entity.state, this.agent)
+        .getTargetCoolingTemperature(entity.state, this.agent)
         ?.celsius(true) ?? this.state.occupiedCoolingSetpoint;
 
     const systemMode = this.getSystemMode(entity);
     const runningMode = config.getRunningMode(entity.state, this.agent);
 
     applyPatchState(this.state, {
-      localTemperature: localTemperature,
-      systemMode: systemMode,
+      localTemperature,
+      systemMode,
       thermostatRunningState: this.getRunningState(systemMode, runningMode),
       ...(this.features.heating
-        ? {
-            occupiedHeatingSetpoint: targetHeatingTemperature,
-            minHeatSetpointLimit: minSetpointLimit,
-            maxHeatSetpointLimit: maxSetpointLimit,
-            absMinHeatSetpointLimit: minSetpointLimit,
-            absMaxHeatSetpointLimit: maxSetpointLimit,
-          }
+        ? { occupiedHeatingSetpoint: targetHeatingTemperature }
         : {}),
       ...(this.features.cooling
-        ? {
-            occupiedCoolingSetpoint: targetCoolingTemperature,
-            minCoolSetpointLimit: minSetpointLimit,
-            maxCoolSetpointLimit: maxSetpointLimit,
-            absMinCoolSetpointLimit: minSetpointLimit,
-            absMaxCoolSetpointLimit: maxSetpointLimit,
-          }
+        ? { occupiedCoolingSetpoint: targetCoolingTemperature }
         : {}),
+      ...limits,
       ...(this.features.autoMode
-        ? {
-            minSetpointDeadBand: 0,
-            thermostatRunningMode: runningMode,
-          }
+        ? { thermostatRunningMode: runningMode }
         : {}),
     });
   }
