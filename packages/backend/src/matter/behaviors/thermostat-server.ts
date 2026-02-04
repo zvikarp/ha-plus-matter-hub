@@ -109,18 +109,6 @@ export class ThermostatServerBase extends FeaturedBase {
       maxCool = Math.max(maxCool, maxHeat + deadband);
     }
 
-    // Validate the constraint before returning
-    if (
-      this.features.heating &&
-      this.features.cooling &&
-      deadband > 0 &&
-      minHeat > minCool - deadband
-    ) {
-      throw new Error(
-        `Thermostat constraint violation: minHeatSetpointLimit (${minHeat}) must be <= minCoolSetpointLimit (${minCool}) - minSetpointDeadBand (${deadband})`,
-      );
-    }
-
     return {
       ...(this.features.heating
         ? {
