@@ -1,7 +1,7 @@
 import type {
   HomeAssistantEntityInformation,
   HomeAssistantEntityState,
-} from "@home-assistant-matter-hub/common";
+} from "@ha-plus-matter-hub/common";
 import {
   WindowCoveringServer as Base,
   MovementDirection,

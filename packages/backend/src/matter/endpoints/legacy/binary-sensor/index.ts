@@ -1,7 +1,7 @@
 import {
   type BinarySensorDeviceAttributes,
   BinarySensorDeviceClass,
-} from "@home-assistant-matter-hub/common";
+} from "@ha-plus-matter-hub/common";
 import type { EndpointType } from "@matter/main";
 import type { HomeAssistantEntityBehavior } from "../../../behaviors/home-assistant-entity-behavior.js";
 import { ContactSensorType } from "./contact-sensor.js";

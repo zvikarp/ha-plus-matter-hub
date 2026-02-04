@@ -1,4 +1,4 @@
-import type { BridgeConfig } from "@home-assistant-matter-hub/common";
+import type { BridgeConfig } from "@ha-plus-matter-hub/common";
 import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";

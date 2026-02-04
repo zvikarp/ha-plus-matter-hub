@@ -2,7 +2,7 @@ import {
   type FanDeviceAttributes,
   FanDeviceDirection,
   type HomeAssistantEntityState,
-} from "@home-assistant-matter-hub/common";
+} from "@ha-plus-matter-hub/common";
 import { FanControl } from "@matter/main/clusters";
 import {
   FanControlServer,

@@ -142,4 +142,4 @@ Exposed via Express (`matterApi`):
 
 ## Contact & Maintainer
 
-See [GitHub Discussions](https://github.com/t0bst4r/home-assistant-matter-hub/discussions/825) for handover or maintainer inquiries.
+See [GitHub Discussions](https://github.com/zvikarp/ha-plus-matter-hub/discussions/825) for handover or maintainer inquiries.

@@ -1,5 +1,5 @@
 {
-  "name": "@home-assistant-matter-hub/common",
+  "name": "@ha-plus-matter-hub/common",
   "version": "0.0.0",
   "private": true,
   "type": "module",

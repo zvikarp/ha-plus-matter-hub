@@ -1,7 +1,7 @@
 import type {
   HomeAssistantDeviceRegistry,
   HomeAssistantEntityRegistry,
-} from "@home-assistant-matter-hub/common";
+} from "@ha-plus-matter-hub/common";
 import type { Connection } from "home-assistant-js-websocket";
 
 export async function getRegistry(

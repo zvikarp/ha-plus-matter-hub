@@ -2,7 +2,7 @@ import type {
   BridgeDataWithMetadata,
   CreateBridgeRequest,
   UpdateBridgeRequest,
-} from "@home-assistant-matter-hub/common";
+} from "@ha-plus-matter-hub/common";
 
 export async function fetchBridges() {
   const res = await fetch(`api/matter/bridges?_s=${Date.now()}`);

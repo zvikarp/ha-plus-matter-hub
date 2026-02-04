@@ -1,4 +1,4 @@
-import type { BridgeDataWithMetadata } from "@home-assistant-matter-hub/common";
+import type { BridgeDataWithMetadata } from "@ha-plus-matter-hub/common";
 import { type AppState, createAppSelector } from "../types";
 import type { AsyncState } from "../utils/async";
 
