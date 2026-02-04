@@ -86,12 +86,11 @@ export class ThermostatServerBase extends FeaturedBase {
     }
 
     // Matter uses 0.01°C units → 2°C = 200
-    const deadband =
-      this.features.autoMode
-        ? 0
-        : this.features.heating && this.features.cooling
-          ? 200
-          : undefined;
+    const deadband = this.features.autoMode
+      ? 0
+      : this.features.heating && this.features.cooling
+        ? 200
+        : undefined;
 
     const minHeat = minSetpointLimit;
     const maxHeat = maxSetpointLimit;
@@ -139,10 +138,7 @@ export class ThermostatServerBase extends FeaturedBase {
     const maxSetpointLimit = config
       .getMaxTemperature(entity.state, this.agent)
       ?.celsius(true);
-    const limits = this.buildSetpointLimits(
-      minSetpointLimit,
-      maxSetpointLimit,
-    );
+    const limits = this.buildSetpointLimits(minSetpointLimit, maxSetpointLimit);
     const localTemperature = config
       .getCurrentTemperature(entity.state, this.agent)
       ?.celsius(true);
@@ -169,9 +165,7 @@ export class ThermostatServerBase extends FeaturedBase {
         ? { occupiedCoolingSetpoint: targetCoolingTemperature }
         : {}),
       ...limits,
-      ...(this.features.autoMode
-        ? { thermostatRunningMode: runningMode }
-        : {}),
+      ...(this.features.autoMode ? { thermostatRunningMode: runningMode } : {}),
     });
   }
 
