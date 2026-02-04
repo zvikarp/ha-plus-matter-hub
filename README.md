@@ -1,29 +1,23 @@
-# Home-Assistant-Matter-Hub
+# HA Plus Matter Hub
 
-!["Home-Assistant-Matter-Hub"](./docs/assets/hamh-logo-small.png)
+!["HA Plus Matter Hub"](./docs/assets/hamh-logo-small.png)
 
 ---
 
-> [!IMPORTANT]  
-> ⚠️ **Project Status: End of Maintenance**
+> [!NOTE]
+> 💙 **Special Thanks to the Original Developers**
 >
-> As of **January 2026**, this project is no longer actively maintained.
+> This project is a community fork of [home-assistant-matter-hub](https://github.com/t0bst4r/home-assistant-matter-hub) 
+> originally created and maintained by **[t0bst4r](https://github.com/t0bst4r)**.
 >
-> I previously announced a search for a new maintainer, but unfortunately no one has stepped forward
-> to take over the project. Due to personal time constraints, I am no longer able to continue development or provide support.
+> All credit for the original development, architecture, and vision goes to t0bst4r and the original contributors. 
+> Their outstanding work made this Matter bridge possible, and we are deeply grateful for their contribution to the 
+> Home Assistant community.
 >
-> **What this means:**
-> - ❌ No further feature development
-> - ❌ No bug fixes or updates
-> - ❌ No guaranteed support
+> The original repository was archived in January 2026. This fork aims to continue the project with community 
+> maintenance and support.
 >
-> The repository will remain available for reference and forking.
->
-> 💡 I would be very happy to see this project continued by the community.  
-> If you plan to fork it and continue development: **may the best fork prevail.**
->
-> Thank you to everyone who used, tested, and contributed to this project ❤️
-
+> **Thank you, t0bst4r! 🙏**
 
 ---
 
@@ -37,7 +31,44 @@ of port forwarding etc.
 
 ## Documentation
 
-Please see the [documentation](https://t0bst4r.github.io/home-assistant-matter-hub) for installation instructions,
+Please see the [documentation](https://zvikarp.github.io/ha-plus-matter-hub) for installation instructions,
 known issues, limitations and guides.
+
+---
+
+## Contributing
+
+We welcome contributions from the community! Here's how you can help:
+
+### Reporting Issues
+- Check existing [issues](https://github.com/zvikarp/ha-plus-matter-hub/issues) before creating a new one
+- Provide detailed information about your environment and steps to reproduce
+- Include relevant logs and error messages
+
+### Contributing Code
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Make your changes following the existing code style
+4. Run tests and linting: `pnpm lint` and `pnpm test`
+5. Commit your changes with clear, descriptive messages
+6. Push to your fork and submit a pull request
+
+### Development Setup
+```bash
+# Clone the repository
+git clone https://github.com/zvikarp/ha-plus-matter-hub.git
+cd ha-plus-matter-hub
+
+# Install dependencies
+pnpm install
+
+# Build the project
+pnpm build
+
+# Run in development mode
+pnpm serve
+```
+
+For more detailed development information, see the [Developer Documentation](./docs/Developer%20Documentation/README.md).
 
 ---
