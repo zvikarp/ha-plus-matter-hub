@@ -71,9 +71,9 @@ jobs:
           RELEASE_CHANNEL=$([ -f RELEASE_CHANNEL ] && cat RELEASE_CHANNEL || echo '')
 
           # If npm release was skipped, generate a version from git sha
-          if [ -z "$RELEASE_VERSION" ]; then
+           if [ -z "$RELEASE_VERSION" ]; then
             SHORT_SHA=$(git rev-parse --short=12 HEAD)
-            RELEASE_VERSION="0.0.0+${SHORT_SHA}"
+            RELEASE_VERSION="0.0.0-dev.${SHORT_SHA}"
           fi
 
           # Prefer channel from file, otherwise from workflow input, otherwise latest
