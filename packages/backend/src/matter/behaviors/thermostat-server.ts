@@ -165,10 +165,9 @@ export class ThermostatServerBase extends FeaturedBase {
     // Ensure setpoints respect the deadband constraint when both heating and cooling are supported
     // Matter.js requires: occupiedCoolingSetpoint >= occupiedHeatingSetpoint + minSetpointDeadBand
     if (this.features.heating && this.features.cooling && targetHeatingTemperature !== undefined && targetCoolingTemperature !== undefined) {
-      const minDeadband = MINIMUM_DEADBAND_MATTER_UNITS;
-      if (targetCoolingTemperature < targetHeatingTemperature + minDeadband) {
+      if (targetCoolingTemperature < targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS) {
         // Adjust cooling setpoint to maintain deadband
-        targetCoolingTemperature = targetHeatingTemperature + minDeadband;
+        targetCoolingTemperature = targetHeatingTemperature + MINIMUM_DEADBAND_MATTER_UNITS;
       }
     }
 
