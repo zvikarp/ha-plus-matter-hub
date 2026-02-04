@@ -7,6 +7,8 @@ const projectRoot = path.join(import.meta.dirname, "../..");
 
 const frontend = packageDir("@ha-plus-matter-hub/frontend", "dist");
 const backend = packageDir("@ha-plus-matter-hub/backend", "dist");
+const common = packageDir("@ha-plus-matter-hub/common", "dist");
+const commonPackageJson = packageDir("@ha-plus-matter-hub/common", "package.json");
 
 const dist = path.resolve(import.meta.dirname, "dist");
 await rimraf(dist);
@@ -17,6 +19,14 @@ fs.cpSync(frontend, path.join(dist, "frontend"), {
 fs.cpSync(backend, path.join(dist, "backend"), {
   recursive: true,
 });
+
+// Bundle the common workspace package into node_modules
+const commonNodeModulesPath = path.join(dist, "node_modules", "@ha-plus-matter-hub", "common");
+fs.mkdirSync(commonNodeModulesPath, { recursive: true });
+fs.cpSync(common, path.join(commonNodeModulesPath, "dist"), {
+  recursive: true,
+});
+fs.cpSync(commonPackageJson, path.join(commonNodeModulesPath, "package.json"));
 
 fs.cpSync(
   path.join(projectRoot, "README.md"),
