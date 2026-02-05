@@ -87,11 +87,10 @@ export class ThermostatServerBase extends FeaturedBase {
     // Only apply constraints if we have valid limits
     // Otherwise, let the setpoints be set without explicit limits
     if (minSetpointLimit === undefined || maxSetpointLimit === undefined) {
-      // Deadband is still required when BOTH heating and cooling are supported
-      const deadband =
-        this.features.heating && this.features.cooling
-          ? MINIMUM_DEADBAND_MATTER_UNITS
-          : 0;
+      // Deadband is required only when AutoMode is supported
+      const deadband = this.features.autoMode
+        ? MINIMUM_DEADBAND_MATTER_UNITS
+        : 0;
 
       return deadband > 0 ? { minSetpointDeadBand: deadband } : {};
     }
@@ -100,12 +99,10 @@ export class ThermostatServerBase extends FeaturedBase {
     const actualMin = Math.min(minSetpointLimit, maxSetpointLimit);
     const actualMax = Math.max(minSetpointLimit, maxSetpointLimit);
 
-    // Deadband is required when BOTH heating and cooling are supported,
-    // regardless of autoMode feature
-    const deadband =
-      this.features.heating && this.features.cooling
-        ? MINIMUM_DEADBAND_MATTER_UNITS
-        : 0;
+    // Deadband is required only when AutoMode is supported
+    const deadband = this.features.autoMode
+      ? MINIMUM_DEADBAND_MATTER_UNITS
+      : 0;
 
     const minHeat = actualMin;
     const maxHeat = actualMax;
@@ -162,13 +159,12 @@ export class ThermostatServerBase extends FeaturedBase {
         .getTargetCoolingTemperature(entity.state, this.agent)
         ?.celsius(true) ?? this.state.occupiedCoolingSetpoint;
 
-    // Ensure setpoints respect the deadband constraint when both heating and cooling are supported
+    // Ensure setpoints respect the deadband constraint when AutoMode is supported
     // Matter.js requires: occupiedCoolingSetpoint >= occupiedHeatingSetpoint + minSetpointDeadBand
     // This adjustment is necessary to prevent initialization failures when Home Assistant provides
     // setpoints that are too close together (less than 2°C apart).
     if (
-      this.features.heating &&
-      this.features.cooling &&
+      this.features.autoMode &&
       targetHeatingTemperature !== undefined &&
       targetCoolingTemperature !== undefined
     ) {

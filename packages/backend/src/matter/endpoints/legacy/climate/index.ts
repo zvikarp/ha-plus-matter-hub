@@ -20,6 +20,7 @@ import { ClimateThermostatServer } from "./behaviors/climate-thermostat-server.j
 function thermostatFeatures(
   supportsCooling: boolean,
   supportsHeating: boolean,
+  supportsAutoMode: boolean,
 ) {
   const features: FeatureSelection<ClusterType.Of<Thermostat.Complete>> =
     new Set();
@@ -29,7 +30,7 @@ function thermostatFeatures(
   if (supportsHeating) {
     features.add("Heating");
   }
-  if (supportsHeating && supportsCooling) {
+  if (supportsHeating && supportsCooling && supportsAutoMode) {
     features.add("AutoMode");
   }
   return features;
@@ -38,10 +39,15 @@ function thermostatFeatures(
 const ClimateDeviceType = (
   supportsCooling: boolean,
   supportsHeating: boolean,
+  supportsAutoMode: boolean,
   supportsOnOff: boolean,
   supportsHumidity: boolean,
 ) => {
-  const features = thermostatFeatures(supportsCooling, supportsHeating);
+  const features = thermostatFeatures(
+    supportsCooling,
+    supportsHeating,
+    supportsAutoMode,
+  );
   if (features.size === 0) {
     throw new InvalidDeviceError(
       'Climates have to support either "heating" or "cooling". Just "auto" is not enough.',
@@ -88,6 +94,9 @@ export function ClimateDevice(
   const supportsHeating = heatingModes.some((mode) =>
     attributes.hvac_modes.includes(mode),
   );
+  const supportsAutoMode =
+    attributes.hvac_modes.includes(ClimateHvacMode.heat_cool) ||
+    testBit(supportedFeatures, ClimateDeviceFeature.TARGET_TEMPERATURE_RANGE);
   const supportsHumidity = testBit(
     supportedFeatures,
     ClimateDeviceFeature.TARGET_HUMIDITY,
@@ -99,6 +108,7 @@ export function ClimateDevice(
   return ClimateDeviceType(
     supportsCooling,
     supportsHeating,
+    supportsAutoMode,
     supportsOnOff,
     supportsHumidity,
   ).set({ homeAssistantEntity });
