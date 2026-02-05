@@ -88,9 +88,8 @@ export class ThermostatServerBase extends FeaturedBase {
     // Otherwise, let the setpoints be set without explicit limits
     if (minSetpointLimit === undefined || maxSetpointLimit === undefined) {
       // Deadband is required only when AutoMode is supported
-      const deadband = this.features.autoMode
-        ? MINIMUM_DEADBAND_MATTER_UNITS
-        : 0;
+      const deadband = this.features.autoMode ? MINIMUM_DEADBAND_MATTER_UNITS : 0;
+
 
       return deadband > 0 ? { minSetpointDeadBand: deadband } : {};
     }
@@ -100,9 +99,7 @@ export class ThermostatServerBase extends FeaturedBase {
     const actualMax = Math.max(minSetpointLimit, maxSetpointLimit);
 
     // Deadband is required only when AutoMode is supported
-    const deadband = this.features.autoMode
-      ? MINIMUM_DEADBAND_MATTER_UNITS
-      : 0;
+    const deadband = this.features.autoMode ? MINIMUM_DEADBAND_MATTER_UNITS : 0;
 
     const minHeat = actualMin;
     const maxHeat = actualMax;
