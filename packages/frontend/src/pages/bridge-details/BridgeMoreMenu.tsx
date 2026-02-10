@@ -37,7 +37,7 @@ export const BridgeMoreMenu = ({ bridge }: BridgeMoreMenuProps) => {
     await factoryReset(bridge)
       .then(() =>
         notification.show({
-          message: "Bridge Reset successfully",
+          message: "Bridge reset successfully",
           severity: "success",
         }),
       )
