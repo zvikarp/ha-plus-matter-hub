@@ -11,7 +11,7 @@ import {
   type HomeAssistantEntityInformation,
   type HomeAssistantEntityRegistry,
   type HomeAssistantEntityState,
-  type HumidiferDeviceAttributes,
+  type HumidifierDeviceAttributes,
   type LightDeviceAttributes,
   LightDeviceColorMode,
   MediaPlayerDeviceFeature,
@@ -131,7 +131,7 @@ const testEntities: Record<
     }),
   ],
   [HomeAssistantDomain.humidifier]: [
-    createEntity<HumidiferDeviceAttributes>("humidifier.h1", "on", {
+    createEntity<HumidifierDeviceAttributes>("humidifier.h1", "on", {
       min_humidity: 15,
       max_humidity: 80,
       humidity: 60,

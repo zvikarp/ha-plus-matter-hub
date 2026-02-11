@@ -1,6 +1,6 @@
 import type {
   HomeAssistantEntityState,
-  HumidiferDeviceAttributes,
+  HumidifierDeviceAttributes,
 } from "@ha-plus-matter-hub/common";
 import { HomeAssistantEntityBehavior } from "../../../../behaviors/home-assistant-entity-behavior.js";
 import {
@@ -11,7 +11,7 @@ import {
 const config: LevelControlConfig = {
   getValuePercent: (state: HomeAssistantEntityState) => {
     const { min_humidity, max_humidity, humidity } =
-      state.attributes as HumidiferDeviceAttributes;
+      state.attributes as HumidifierDeviceAttributes;
     if (humidity != null) {
       return (humidity - min_humidity) / (max_humidity - min_humidity);
     }
@@ -20,7 +20,7 @@ const config: LevelControlConfig = {
   moveToLevelPercent: (humidityPercent, agent) => {
     const { min_humidity, max_humidity } = agent.get(
       HomeAssistantEntityBehavior,
-    ).entity.state.attributes as HumidiferDeviceAttributes;
+    ).entity.state.attributes as HumidifierDeviceAttributes;
     const humidity =
       (max_humidity - min_humidity) * humidityPercent + min_humidity;
     return {
