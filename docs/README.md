@@ -1,6 +1,9 @@
 # Home-Assistant-Matter-Hub
 
-!["Home-Assistant-Matter-Hub"](./assets/hamh-logo-small.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="./assets/hamh-logo-small-dark.png">
+  <img src="./assets/hamh-logo-small.png" alt="HA Plus Matter Hub" width="140">
+</picture>
 
 ---
 

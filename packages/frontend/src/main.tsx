@@ -16,6 +16,7 @@ import { NotificationsProvider } from "./components/notifications/notifications-
 import { routes } from "./routes.tsx";
 import { store } from "./state/store.ts";
 import { AppLayout } from "./theme/AppLayout.tsx";
+import { startHaThemeSync } from "./theme/ha-theme.ts";
 import { appTheme } from "./theme/theme.ts";
 
 let basename = document
@@ -37,6 +38,8 @@ const router = createBrowserRouter(
     basename,
   },
 );
+
+startHaThemeSync();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

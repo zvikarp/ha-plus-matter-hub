@@ -12,6 +12,7 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       node-version: ${{ steps.setup.outputs.node-version }}
+      package-version: ${{ steps.version.outputs.package-version }}
     steps:
       - uses: actions/checkout@v6
         with:
@@ -30,6 +31,11 @@ jobs:
         run: pnpm run test
       - name: Build
         run: pnpm run build
+      - name: Resolve Version
+        id: version
+        run: |
+          SHORT_SHA=$(git rev-parse --short=12 HEAD)
+          echo "package-version=0.0.0-dev.${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
       - name: Package Artifact
         uses: actions/upload-artifact@v5
@@ -73,5 +79,5 @@ jobs:
         with:
           dockerfile: ${{ matrix.dockerfile }}
           node-version: ${{ needs.verify.outputs.node-version }}
-          package-version: run-${{ github.run_number }}
-          channel: "channel-run-${{ github.run_number }}"
+          package-version: ${{ needs.verify.outputs.package-version }}
+          channel: "dev"
