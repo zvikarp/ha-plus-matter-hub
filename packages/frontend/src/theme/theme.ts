@@ -4,32 +4,32 @@ export const appTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
-      main: "var(--primary-color, #03a9f4)",
+      main: "#03a9f4",
     },
     secondary: {
-      main: "var(--accent-color, #ff9800)",
+      main: "#ff9800",
     },
     error: {
-      main: "var(--error-color, #db4437)",
+      main: "#db4437",
     },
     warning: {
-      main: "var(--warning-color, #ffa000)",
+      main: "#ffa000",
     },
     success: {
-      main: "var(--success-color, #43a047)",
+      main: "#43a047",
     },
     info: {
-      main: "var(--info-color, #039be5)",
+      main: "#039be5",
     },
     background: {
-      default: "var(--primary-background-color, #fafafa)",
-      paper: "var(--card-background-color, #ffffff)",
+      default: "#fafafa",
+      paper: "#ffffff",
     },
     text: {
-      primary: "var(--primary-text-color, #212121)",
-      secondary: "var(--secondary-text-color, #727272)",
+      primary: "#212121",
+      secondary: "#727272",
     },
-    divider: "var(--divider-color, rgba(0, 0, 0, 0.12))",
+    divider: "rgba(0, 0, 0, 0.12)",
   },
   typography: {
     fontFamily:
@@ -40,6 +40,7 @@ export const appTheme = createTheme({
       styleOverrides: {
         body: {
           backgroundColor: "var(--primary-background-color, #fafafa)",
+          color: "var(--primary-text-color, #212121)",
         },
       },
     },
@@ -50,6 +51,28 @@ export const appTheme = createTheme({
             "var(--app-header-background-color, var(--primary-color, #03a9f4))",
           color:
             "var(--app-header-text-color, var(--text-light-primary-color, #ffffff))",
+        },
+      },
+    },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none",
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "var(--card-background-color, #ffffff)",
+          color: "var(--primary-text-color, #212121)",
+        },
+      },
+    },
+    MuiDivider: {
+      styleOverrides: {
+        root: {
+          borderColor: "var(--divider-color, rgba(0, 0, 0, 0.12))",
         },
       },
     },

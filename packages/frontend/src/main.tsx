@@ -12,7 +12,9 @@ import "@fontsource/roboto/700.css";
 import CssBaseline from "@mui/material/CssBaseline";
 import GlobalStyles from "@mui/material/GlobalStyles";
 import { ThemeProvider } from "@mui/material/styles";
+import { AppErrorBoundary } from "./components/misc/AppErrorBoundary.tsx";
 import { NotificationsProvider } from "./components/notifications/notifications-provider.tsx";
+import { AppErrorPage } from "./pages/AppErrorPage.tsx";
 import { routes } from "./routes.tsx";
 import { store } from "./state/store.ts";
 import { AppLayout } from "./theme/AppLayout.tsx";
@@ -31,6 +33,7 @@ const router = createBrowserRouter(
     {
       path: "/",
       element: <AppLayout />,
+      errorElement: <AppErrorPage />,
       children: routes,
     },
   ],
@@ -56,9 +59,11 @@ createRoot(document.getElementById("root")!).render(
               },
           }}
         />
-        <NotificationsProvider>
-          <RouterProvider router={router} />
-        </NotificationsProvider>
+        <AppErrorBoundary>
+          <NotificationsProvider>
+            <RouterProvider router={router} />
+          </NotificationsProvider>
+        </AppErrorBoundary>
       </ThemeProvider>
     </StateProvider>
   </StrictMode>,

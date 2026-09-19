@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
 import { Breadcrumbs } from "../../components/breadcrumbs/Breadcrumbs.tsx";
 import { BridgeConfigEditor } from "../../components/bridge/BridgeConfigEditor.tsx";
+import { PageLoading, PageMessage } from "../../components/misc/PageState.tsx";
 import { useNotifications } from "../../components/notifications/use-notifications.ts";
 import {
   useBridge,
@@ -17,7 +18,12 @@ export const EditBridgePage = () => {
   const navigate = useNavigate();
 
   const { bridgeId } = useParams() as { bridgeId: string };
-  const { content: bridge, isLoading } = useBridge(bridgeId);
+  const {
+    content: bridge,
+    isInitialized,
+    isLoading,
+    error,
+  } = useBridge(bridgeId);
   const usedPorts = useUsedPorts();
   const updateBridge = useUpdateBridge();
 
@@ -52,11 +58,25 @@ export const EditBridgePage = () => {
       );
   };
 
-  if (isLoading || !usedPorts) {
-    return "Loading";
+  if (!isInitialized || isLoading || !usedPorts) {
+    return <PageLoading label="Loading bridge configuration" />;
+  }
+  if (error) {
+    return (
+      <PageMessage
+        kind="error"
+        title="Could not load this bridge"
+        message={error.message ?? "The bridge service did not respond."}
+      />
+    );
   }
   if (!bridge || !bridgeConfig) {
-    return "Not found";
+    return (
+      <PageMessage
+        title="Bridge not found"
+        message="It may have been removed from Matter Hub Plus."
+      />
+    );
   }
 
   return (
