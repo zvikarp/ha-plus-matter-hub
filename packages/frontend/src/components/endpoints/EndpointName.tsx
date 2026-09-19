@@ -5,8 +5,12 @@ export interface EndpointNameProps {
 }
 
 export const EndpointName = ({ endpoint }: EndpointNameProps) => {
-  return getName(endpoint.state) ?? endpoint.id.local;
+  return getEndpointName(endpoint);
 };
+
+export function getEndpointName(endpoint: EndpointData) {
+  return getName(endpoint.state) ?? endpoint.id.local;
+}
 
 function getName(state: object) {
   if ("basicInformation" in state) {

@@ -7,6 +7,7 @@ import { useMemo } from "react";
 import { useNavigate } from "react-router";
 import { Breadcrumbs } from "../../components/breadcrumbs/Breadcrumbs.tsx";
 import { BridgeConfigEditor } from "../../components/bridge/BridgeConfigEditor.tsx";
+import { PageLoading, PageMessage } from "../../components/misc/PageState.tsx";
 import { useNotifications } from "../../components/notifications/use-notifications.ts";
 import {
   useBridges,
@@ -36,7 +37,8 @@ export const CreateBridgePage = () => {
   const notifications = useNotifications();
   const navigate = useNavigate();
 
-  const showReuseBridgeHint = !!useBridges().content?.length;
+  const bridges = useBridges();
+  const showReuseBridgeHint = !!bridges.content?.length;
   const usedPorts = useUsedPorts();
   const bridgeConfig: BridgeConfig | undefined = useMemo(() => {
     if (usedPorts) {
@@ -62,8 +64,18 @@ export const CreateBridgePage = () => {
       );
   };
 
+  if (bridges.error) {
+    return (
+      <PageMessage
+        kind="error"
+        title="Could not prepare a new bridge"
+        message={bridges.error.message ?? "The bridge service did not respond."}
+      />
+    );
+  }
+
   if (!bridgeConfig || !usedPorts) {
-    return "Loading";
+    return <PageLoading label="Preparing bridge configuration" />;
   }
 
   return (

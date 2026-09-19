@@ -4,15 +4,16 @@ import { BridgeDetailsPage } from "./pages/bridge-details/BridgeDetailsPage.tsx"
 import { BridgesPage } from "./pages/bridges/BridgesPage.tsx";
 import { CreateBridgePage } from "./pages/edit-bridge/CreateBridgePage.tsx";
 import { EditBridgePage } from "./pages/edit-bridge/EditBridgePage.tsx";
+import { NotFoundPage } from "./pages/NotFoundPage.tsx";
 
-const documentationUrl = "https://t0bst4r.github.io/home-assistant-matter-hub";
+const documentationUrl = "https://zvikarp.github.io/ha-plus-matter-hub";
 export const navigation = {
   bridges: "/bridges",
   bridge: (bridgeId: string) => `/bridges/${bridgeId}`,
   createBridge: "/bridges/create",
   editBridge: (bridgeId: string) => `/bridges/${bridgeId}/edit`,
 
-  githubRepository: "https://github.com/t0bst4r/home-assistant-matter-hub/",
+  githubRepository: "https://github.com/zvikarp/ha-plus-matter-hub/",
   documentation: documentationUrl,
   faq: {
     multiFabric: `${documentationUrl}/connect-multiple-fabrics`,
@@ -33,6 +34,7 @@ export const routes: RouteObject[] = [
       { path: navigation.createBridge, element: <CreateBridgePage /> },
       { path: navigation.bridge(":bridgeId"), element: <BridgeDetailsPage /> },
       { path: navigation.editBridge(":bridgeId"), element: <EditBridgePage /> },
+      { path: "*", element: <NotFoundPage /> },
     ],
   },
 ];
