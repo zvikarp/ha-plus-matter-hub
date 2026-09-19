@@ -4,7 +4,7 @@
 
 ### Added
 
-- Searchable exposed-device management grouped by readable Matter device type, with immediate device details and manual refresh.
+- Searchable exposed-device management grouped by Home Assistant area and readable Matter device type, with immediate device details and manual refresh.
 - Friendly loading, empty, error, retry, and not-found states throughout the bridge experience.
 - Confirmation dialogs explaining the consequences of factory-resetting or deleting a bridge.
 - A recovery screen for unexpected interface rendering failures.

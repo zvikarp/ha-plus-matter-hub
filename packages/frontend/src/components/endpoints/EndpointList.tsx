@@ -19,6 +19,7 @@ import { getEndpointName } from "./EndpointName.tsx";
 import { EndpointState } from "./EndpointState.tsx";
 import {
   filterDevices,
+  friendlyArea,
   friendlyDeviceType,
   listDevices,
 } from "./endpoint-list-utils.ts";
@@ -38,8 +39,9 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
   const groupedDevices = useMemo(() => {
     const groups = new Map<string, EndpointData[]>();
     for (const device of filteredDevices) {
-      const type = friendlyDeviceType(device.type.name);
-      groups.set(type, [...(groups.get(type) ?? []), device]);
+      const type = friendlyDeviceType(device.endpoint.type.name);
+      const group = `${friendlyArea(device.area)} · ${type}`;
+      groups.set(group, [...(groups.get(group) ?? []), device.endpoint]);
     }
     return [...groups.entries()].sort(([left], [right]) =>
       left.localeCompare(right),
@@ -49,9 +51,11 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
   useEffect(() => {
     if (
       !selectedItem ||
-      !devices.some((item) => item.id.global === selectedItem.id.global)
+      !devices.some(
+        (item) => item.endpoint.id.global === selectedItem.id.global,
+      )
     ) {
-      setSelectedItem(devices[0]);
+      setSelectedItem(devices[0]?.endpoint);
     }
   }, [devices, selectedItem]);
 

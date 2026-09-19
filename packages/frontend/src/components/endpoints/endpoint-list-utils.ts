@@ -3,39 +3,77 @@ import { getEndpointName } from "./EndpointName.tsx";
 
 const structuralTypes = new Set(["RootNode", "Aggregator"]);
 
-export function listDevices(root: EndpointData): EndpointData[] {
-  const endpoints: EndpointData[] = [];
-  const queue = [root];
+export interface DeviceListItem {
+  endpoint: EndpointData;
+  area: string;
+}
+
+export function listDevices(root: EndpointData): DeviceListItem[] {
+  const devices: DeviceListItem[] = [];
+  const queue = [
+    { endpoint: root, inheritedArea: undefined as string | undefined },
+  ];
 
   while (queue.length > 0) {
-    const endpoint = queue.shift()!;
+    const { endpoint, inheritedArea } = queue.shift()!;
+    const area = getEndpointArea(endpoint) ?? inheritedArea;
     if (!structuralTypes.has(endpoint.type.name)) {
-      endpoints.push(endpoint);
+      devices.push({ endpoint, area: area ?? "Unassigned" });
     }
-    queue.push(...endpoint.parts);
+    queue.push(
+      ...endpoint.parts.map((part) => ({
+        endpoint: part,
+        inheritedArea: area,
+      })),
+    );
   }
 
-  return endpoints.sort((left, right) =>
-    getEndpointName(left).localeCompare(getEndpointName(right)),
+  return devices.sort((left, right) =>
+    getEndpointName(left.endpoint).localeCompare(
+      getEndpointName(right.endpoint),
+    ),
   );
 }
 
-export function filterDevices(devices: EndpointData[], query: string) {
+export function filterDevices(devices: DeviceListItem[], query: string) {
   const normalizedQuery = query.trim().toLocaleLowerCase();
   if (!normalizedQuery) {
     return devices;
   }
 
-  return devices.filter((device) =>
+  return devices.filter(({ endpoint, area }) =>
     [
-      getEndpointName(device),
-      device.type.name,
-      device.id.local,
-      String(device.endpoint),
+      getEndpointName(endpoint),
+      endpoint.type.name,
+      endpoint.id.local,
+      String(endpoint.endpoint),
+      area,
     ].some((value) => value.toLocaleLowerCase().includes(normalizedQuery)),
   );
 }
 
 export function friendlyDeviceType(type: string) {
   return type.replace(/([a-z])([A-Z])/g, "$1 $2");
+}
+
+export function friendlyArea(area: string) {
+  if (area === "Unassigned") {
+    return area;
+  }
+  const label = area.replace(/[_-]+/g, " ");
+  return label.charAt(0).toLocaleUpperCase() + label.slice(1);
+}
+
+function getEndpointArea(endpoint: EndpointData): string | undefined {
+  const state = endpoint.state as {
+    homeAssistantEntity?: {
+      entity?: {
+        registry?: { area_id?: string };
+        deviceRegistry?: { area_id?: unknown };
+      };
+    };
+  };
+  const entity = state.homeAssistantEntity?.entity;
+  const area = entity?.registry?.area_id ?? entity?.deviceRegistry?.area_id;
+  return typeof area === "string" && area.length > 0 ? area : undefined;
 }
