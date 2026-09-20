@@ -2,7 +2,7 @@
   "name": "ha-plus-matter-hub",
   "description": "",
   "version": "0.0.0",
-  "private": false,
+  "private": true,
   "type": "module",
   "bin": {
     "ha-plus-matter-hub": "./dist/backend/cli.js"

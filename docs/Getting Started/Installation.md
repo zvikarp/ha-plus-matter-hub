@@ -5,8 +5,7 @@ This application can be installed in different ways:
 1. Home-Assistant AddOn for Home Assistant OS (preferred)
 2. Manual Deployment
    1. Ready to use Docker Image
-   2. Manual installation using `npm`
-   3. Configuration options
+   2. Configuration options
 
 > [!WARNING]
 > In order to successfully use this application, you need to ensure IPv6 is enabled properly.
@@ -22,7 +21,7 @@ This application can be installed in different ways:
 
 Simply add the following GitHub Repository URL to your Home Assistant AddOn Store.
 
-> https://github.com/t0bst4r/home-assistant-addons
+> https://github.com/zvikarp/ha-plus-addons
 
 1. Open the UI of your Home Assistant instance
 2. Go to `Settings` -> `Add-Ons` -> `Add-On Store`
@@ -84,46 +83,11 @@ docker run -d \
   ghcr.io/zvikarp/ha-plus-matter-hub:latest
 ```
 
-See 2.3 for more configuration options.
+See 2.2 for more configuration options.
 
 Now you can go ahead and follow the [bridge configuration guide](./Bridge%20Configuration.md).
 
-### 2.2 Manual installation using `npm`
-
-If you want to install this application by hand, you simply need to run
-
-```bash
-npm install -g ha-plus-matter-hub
-```
-
-To start the application, run
-
-```bash
-ha-plus-matter-hub start \
-  # required: the address of your home assistant instance
-  # can be replaced with an environment variable: HAMH_HOME_ASSISTANT_URL
-  --home-assistant-url="http://192.168.178.123:8123/" \
-  # required: a long lived access token for your home assistant instance
-  # can be replaced with an environment variable: HAMH_HOME_ASSISTANT_ACCESS_TOKEN
-  --home-assistant-access-token="eyJ.....dlc" \
-  # optional: debug | info | warn | error
-  # default: info
-  # can be replaced with an environment variable: HAMH_LOG_LEVEL
-  --log-level=info \
-  # optional: the port to use for the web ui
-  # default: 8482
-  # can be replaced with an environment variable: HAMH_WEB_PORT
-  --http-port=8482
-```
-
-The application will store its data in `$HOME/.ha-plus-matter-hub`. You can configure the storage path by
-using the `--storage-location=/path/to/storage` option or `HAMH_STORAGE_STORAGE` environment variable.
-
-See 2.3 for more configuration options.
-
-Now you can go ahead and follow the [bridge configuration guide](./Bridge%20Configuration.md).
-
-### 2.3 Configuration options
+### 2.2 Configuration options
 
 General app configuration is done using the command line interface or environment variables. The following parameters
 are available:
