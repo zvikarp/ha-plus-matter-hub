@@ -43,7 +43,8 @@ runs:
       uses: docker/build-push-action@v6
       with:
         push: ${{inputs.push}}
-        platforms: linux/amd64,linux/arm/v7,linux/arm64/v8
+        # Official Node.js 24 images are published for 64-bit platforms only.
+        platforms: linux/amd64,linux/arm64/v8
         context: ${{ steps.meta.outputs.context }}
         file: ${{inputs.dockerfile}}
         build-args: |
