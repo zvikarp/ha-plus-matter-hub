@@ -15,6 +15,10 @@
       "@semantic-release/github",
       {
         "assets": [
+          {
+            "path": "apps/ha-plus-matter-hub/package.tgz",
+            "label": "Standalone package"
+          },
           { "path": "CHANGELOG.md", "label": "Release Changelog" },
           { "path": "CHANGELOG_FULL.md", "label": "Full Changelog" }
         ]
@@ -23,8 +27,7 @@
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "APP_VERSION=${nextRelease.version} pnpm run release:version ${nextRelease.version} && APP_VERSION=${nextRelease.version} pnpm run release:pack",
-        "publishCmd": "CHANNEL='${nextRelease.channel}' pnpm run release:publish"
+        "prepareCmd": "APP_VERSION=${nextRelease.version} pnpm run release:version ${nextRelease.version} && APP_VERSION=${nextRelease.version} pnpm run release:pack"
       }
     ],
     [
