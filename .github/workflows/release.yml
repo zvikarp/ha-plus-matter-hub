@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       publish_npm:
-        description: "Publish to npm (semantic-release)"
+        description: "Publish to npm (NPM_TOKEN required until trusted publishing is configured)"
         type: boolean
         required: false
         default: false
@@ -62,6 +62,9 @@ jobs:
         if: ${{ inputs.publish_npm }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # npm trusted publishing cannot create a package on its first release.
+          # NPM_TOKEN bootstraps the package and remains a fallback for publishing.
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: pnpm run release
 
       - name: Analyze Release
