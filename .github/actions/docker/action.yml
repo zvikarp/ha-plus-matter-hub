@@ -53,3 +53,16 @@ runs:
         tags: |
           ${{ steps.meta.outputs.dockertag }}:${{ inputs.package-version }}
           ${{ steps.meta.outputs.dockertag }}:${{ inputs.channel }}
+        labels: |
+          org.opencontainers.image.source=https://github.com/${{ github.repository }}
+          org.opencontainers.image.version=${{ inputs.package-version }}
+
+    - name: Verify public image access
+      if: ${{ inputs.push == 'true' }}
+      shell: bash
+      run: |
+        docker logout ghcr.io
+        if ! docker manifest inspect "${{ steps.meta.outputs.dockertag }}:${{ inputs.package-version }}" >/dev/null; then
+          echo "::error::The published GHCR package is not public. Make it public in the package settings, then rerun the release workflow."
+          exit 1
+        fi

@@ -15,4 +15,5 @@
 - API failures now surface as actionable errors instead of being treated as successful responses.
 - Documentation and source links now point to the maintained HA Plus Matter Hub fork.
 - Releases now publish versioned GitHub and GHCR artifacts without depending on npm publishing.
+- Release jobs verify that Home Assistant can pull published GHCR images without credentials.
 - Light and dark documentation branding now use the same finalized Matter Hub icon.
