@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StateProvider } from "react-redux";
 import { createBrowserRouter } from "react-router";
@@ -18,8 +18,8 @@ import { AppErrorPage } from "./pages/AppErrorPage.tsx";
 import { routes } from "./routes.tsx";
 import { store } from "./state/store.ts";
 import { AppLayout } from "./theme/AppLayout.tsx";
-import { startHaThemeSync } from "./theme/ha-theme.ts";
-import { appTheme } from "./theme/theme.ts";
+import { readHaTheme, startHaThemeSync } from "./theme/ha-theme.ts";
+import { createAppTheme } from "./theme/theme.ts";
 
 let basename = document
   .getElementsByTagName("base")[0]
@@ -42,29 +42,38 @@ const router = createBrowserRouter(
   },
 );
 
-startHaThemeSync();
+const ThemedApp = () => {
+  const [haTheme, setHaTheme] = useState(readHaTheme);
+  const theme = useMemo(() => createAppTheme(haTheme), [haTheme]);
+
+  useEffect(() => startHaThemeSync(setHaTheme), []);
+
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <GlobalStyles
+        styles={{
+          // @rsjf/mui has a bug which breaks nested item rendering (see https://github.com/rjsf-team/react-jsonschema-form/issues/4838)
+          ".rjsf-field-array > .MuiFormControl-root > .MuiPaper-root > .MuiBox-root > .MuiGrid-root > .MuiGrid-root:has(> .MuiBox-root > .MuiPaper-root > .MuiBox-root > .rjsf-field)":
+            {
+              overflow: "initial !important",
+              flexGrow: 1,
+            },
+        }}
+      />
+      <AppErrorBoundary>
+        <NotificationsProvider>
+          <RouterProvider router={router} />
+        </NotificationsProvider>
+      </AppErrorBoundary>
+    </ThemeProvider>
+  );
+};
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <StateProvider store={store}>
-      <ThemeProvider theme={appTheme}>
-        <CssBaseline />
-        <GlobalStyles
-          styles={{
-            // @rsjf/mui has a bug which breaks nested item rendering (see https://github.com/rjsf-team/react-jsonschema-form/issues/4838)
-            ".rjsf-field-array > .MuiFormControl-root > .MuiPaper-root > .MuiBox-root > .MuiGrid-root > .MuiGrid-root:has(> .MuiBox-root > .MuiPaper-root > .MuiBox-root > .rjsf-field)":
-              {
-                overflow: "initial !important",
-                flexGrow: 1,
-              },
-          }}
-        />
-        <AppErrorBoundary>
-          <NotificationsProvider>
-            <RouterProvider router={router} />
-          </NotificationsProvider>
-        </AppErrorBoundary>
-      </ThemeProvider>
+      <ThemedApp />
     </StateProvider>
   </StrictMode>,
 );
