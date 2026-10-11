@@ -28,8 +28,9 @@ export const BridgeCard = ({ bridge }: BridgeCardProps) => {
             flexDirection="column"
             justifyContent="center"
             flexGrow={1}
+            minWidth={0}
           >
-            <Typography>
+            <Typography sx={{ overflowWrap: "anywhere" }}>
               {bridge.name} <BridgeStatusIcon status={bridge.status} />
             </Typography>
             <Grid container>

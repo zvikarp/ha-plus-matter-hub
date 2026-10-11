@@ -76,6 +76,9 @@ export const createAppTheme = (haTheme: HaTheme) =>
             padding: "6px 16px",
             borderRadius: 4,
             textTransform: "none",
+            "@media (max-width: 599.95px)": {
+              minHeight: 44,
+            },
           },
         },
       },
@@ -85,6 +88,10 @@ export const createAppTheme = (haTheme: HaTheme) =>
             width: 40,
             height: 40,
             color: haTheme.textSecondary,
+            "@media (max-width: 599.95px)": {
+              width: 44,
+              height: 44,
+            },
           },
         },
       },

@@ -57,7 +57,7 @@ export const EndpointState = (props: EndpointStateProps) => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
           >
-            <Typography component="span">
+            <Typography component="span" sx={{ overflowWrap: "anywhere" }}>
               Behavior: <strong>{behavior}</strong>
             </Typography>
           </AccordionSummary>
@@ -80,7 +80,10 @@ const ObjectTable = <T extends object>(props: {
   );
   return (
     <TableContainer>
-      <Table size="small">
+      <Table
+        size="small"
+        sx={{ tableLayout: "fixed", "& td": { overflowWrap: "anywhere" } }}
+      >
         {!props.hideHead && (
           <TableHead>
             <TableRow>

@@ -24,10 +24,10 @@ export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
           <Grid size={{ xs: 12, md: "auto" }}>
             <Pairing bridge={bridge} />
           </Grid>
-          <Grid size={{ xs: 12, md: "grow" }}>
+          <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
             <BasicInfo bridge={bridge} />
           </Grid>
-          <Grid size={{ xs: 12, md: "grow" }}>
+          <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
             <CommissioningInfo bridge={bridge} />
           </Grid>
         </Grid>
@@ -43,6 +43,15 @@ export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
                 </span>
               }
               color="success"
+              sx={{
+                maxWidth: "100%",
+                height: "auto",
+                "& .MuiChip-label": {
+                  whiteSpace: "normal",
+                  overflowWrap: "anywhere",
+                  py: 0.5,
+                },
+              }}
             />
           ))}
           {bridge.filter.exclude.map((filter, idx) => (
@@ -56,6 +65,15 @@ export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
                 </span>
               }
               color="error"
+              sx={{
+                maxWidth: "100%",
+                height: "auto",
+                "& .MuiChip-label": {
+                  whiteSpace: "normal",
+                  overflowWrap: "anywhere",
+                  py: 0.5,
+                },
+              }}
             />
           ))}
         </Stack>
@@ -115,7 +133,11 @@ const Pairing = (props: { bridge: BridgeDataWithMetadata }) => {
 
 const BasicInfo = (props: { bridge: BridgeDataWithMetadata }) => {
   return (
-    <Typography variant="subtitle2" component="div">
+    <Typography
+      variant="subtitle2"
+      component="div"
+      sx={{ overflowWrap: "anywhere" }}
+    >
       <div>ID: {props.bridge.id}</div>
       <div>Name: {props.bridge.name}</div>
       <div>Port: {props.bridge.port}</div>
@@ -136,7 +158,11 @@ const CommissioningInfo = (props: { bridge: BridgeDataWithMetadata }) => {
     return "";
   }
   return (
-    <Typography variant="subtitle2" component="div">
+    <Typography
+      variant="subtitle2"
+      component="div"
+      sx={{ overflowWrap: "anywhere" }}
+    >
       <div>Passcode: {props.bridge.commissioning.passcode}</div>
       <div>Discriminator: {props.bridge.commissioning.discriminator}</div>
       <div>

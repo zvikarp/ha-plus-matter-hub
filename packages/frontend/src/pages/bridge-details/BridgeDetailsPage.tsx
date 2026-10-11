@@ -82,8 +82,13 @@ export const BridgeDetailsPage = () => {
         ]}
       />
 
-      <Box display="flex" justifyContent="space-between">
-        <Typography variant="h4">
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="flex-start"
+        gap={1}
+      >
+        <Typography variant="h4" sx={{ minWidth: 0, overflowWrap: "anywhere" }}>
           {bridge.name} <BridgeStatusIcon status={bridge.status} />
         </Typography>
         <BridgeMoreMenu bridge={bridgeId} bridgeName={bridge.name} />
@@ -99,6 +104,7 @@ export const BridgeDetailsPage = () => {
           justifyContent="flex-end"
           alignItems="center"
           gap={1}
+          flexWrap="wrap"
         >
           {timer != null && (
             <Tooltip title="Device state refreshes automatically.">
