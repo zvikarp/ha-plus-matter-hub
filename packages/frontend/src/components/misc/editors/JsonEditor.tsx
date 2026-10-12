@@ -86,7 +86,7 @@ export const JsonEditor = (props: JsonEditorProps) => {
 
   return (
     <Stack spacing={2}>
-      <Box position="relative">
+      <Box position="relative" sx={{ minWidth: 0, maxWidth: "100%" }}>
         <ReactCodeMirror
           value={stringValue}
           onChange={(value) => valueChanged(value)}

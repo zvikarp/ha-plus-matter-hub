@@ -1,0 +1,92 @@
+[
+  {
+    "width": 320,
+    "route": "/bridges",
+    "scroll": 320,
+    "viewport": 320
+  },
+  {
+    "width": 320,
+    "route": "/bridges/fixture",
+    "scroll": 320,
+    "viewport": 320
+  },
+  {
+    "width": 320,
+    "route": "/bridges/create",
+    "scroll": 320,
+    "viewport": 320
+  },
+  {
+    "width": 375,
+    "route": "/bridges",
+    "scroll": 375,
+    "viewport": 375
+  },
+  {
+    "width": 375,
+    "route": "/bridges/fixture",
+    "scroll": 375,
+    "viewport": 375
+  },
+  {
+    "width": 375,
+    "route": "/bridges/create",
+    "scroll": 375,
+    "viewport": 375
+  },
+  {
+    "width": 390,
+    "route": "/bridges",
+    "scroll": 390,
+    "viewport": 390
+  },
+  {
+    "width": 390,
+    "route": "/bridges/fixture",
+    "scroll": 390,
+    "viewport": 390
+  },
+  {
+    "width": 390,
+    "route": "/bridges/create",
+    "scroll": 390,
+    "viewport": 390
+  },
+  {
+    "width": 768,
+    "route": "/bridges",
+    "scroll": 768,
+    "viewport": 768
+  },
+  {
+    "width": 768,
+    "route": "/bridges/fixture",
+    "scroll": 768,
+    "viewport": 768
+  },
+  {
+    "width": 768,
+    "route": "/bridges/create",
+    "scroll": 768,
+    "viewport": 768
+  },
+  {
+    "width": 1440,
+    "route": "/bridges",
+    "scroll": 1440,
+    "viewport": 1440
+  },
+  {
+    "width": 1440,
+    "route": "/bridges/fixture",
+    "scroll": 1440,
+    "viewport": 1440
+  },
+  {
+    "width": 1440,
+    "route": "/bridges/create",
+    "scroll": 1440,
+    "viewport": 1440
+  }
+]

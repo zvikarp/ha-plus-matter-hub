@@ -100,6 +100,7 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
       <IconButton
         onClick={handleOpen}
         aria-label={`More actions for ${bridgeName}`}
+        sx={{ flexShrink: 0, width: 44, height: 44 }}
       >
         <MoreVert />
       </IconButton>
@@ -133,7 +134,7 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
           {action === "delete" ? "Delete bridge?" : "Factory reset bridge?"}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
+          <DialogContentText sx={{ overflowWrap: "anywhere" }}>
             {action === "delete"
               ? `This permanently deletes “${bridgeName}” and its configuration. Paired controllers will no longer be able to use its devices.`
               : `This removes every controller paired with “${bridgeName}”. The bridge configuration stays, but you will need to pair each controller again.`}

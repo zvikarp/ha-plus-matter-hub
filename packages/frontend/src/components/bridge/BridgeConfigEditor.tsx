@@ -97,6 +97,12 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
                 ? "JSON editor"
                 : "Form editor"
             }
+            aria-label={
+              editorMode === BridgeEditorMode.FIELDS_EDITOR
+                ? "JSON editor"
+                : "Form editor"
+            }
+            sx={{ minHeight: 44 }}
           >
             {editorMode === BridgeEditorMode.FIELDS_EDITOR ? (
               <TextFields />

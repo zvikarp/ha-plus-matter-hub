@@ -106,7 +106,11 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
               <List disablePadding aria-label="Exposed devices">
                 {groupedDevices.map(([type, items]) => (
                   <Box component="li" key={type} sx={{ listStyle: "none" }}>
-                    <ListSubheader>{type}</ListSubheader>
+                    <ListSubheader
+                      sx={{ overflowWrap: "anywhere", lineHeight: 1.5, py: 1 }}
+                    >
+                      {type}
+                    </ListSubheader>
                     {items.map((device) => (
                       <ListItemButton
                         key={device.id.global}
@@ -119,6 +123,7 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
                         <ListItemText
                           primary={getEndpointName(device)}
                           secondary={`Endpoint ${device.endpoint}`}
+                          sx={{ overflowWrap: "anywhere" }}
                         />
                       </ListItemButton>
                     ))}
