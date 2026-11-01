@@ -6,6 +6,7 @@ import { OnOffServer as Base } from "@matter/main/behaviors";
 import { applyPatchState } from "../../utils/apply-patch-state.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import { repeatsCommands } from "./utils/repeat-commands.js";
 
 export interface OnOffConfig {
   isOn?: ValueGetter<boolean>;
@@ -41,6 +42,13 @@ class OnOffServerBase extends FeaturedBase {
   }
 
   override on() {
+    if (
+      !repeatsCommands(this.agent, "onOff") &&
+      this.isOn(this.agent.get(HomeAssistantEntityBehavior).entity.state) ===
+        true
+    ) {
+      return;
+    }
     const { turnOn } = this.state.config;
     if (turnOn === null) {
       setTimeout(this.callback(this.autoReset), 1000);
@@ -53,6 +61,13 @@ class OnOffServerBase extends FeaturedBase {
   }
 
   override off() {
+    if (
+      !repeatsCommands(this.agent, "onOff") &&
+      this.isOn(this.agent.get(HomeAssistantEntityBehavior).entity.state) ===
+        false
+    ) {
+      return;
+    }
     const { turnOff } = this.state.config;
     if (turnOff === null) {
       setTimeout(this.callback(this.autoReset), 1000);

@@ -1,11 +1,19 @@
 import type { HomeAssistantEntityInformation } from "@ha-plus-matter-hub/common";
+import type { Endpoint, ValueSupervisor } from "@matter/main";
 import { ThermostatServer as Base } from "@matter/main/behaviors";
 import { Thermostat } from "@matter/main/clusters";
+import { Val } from "@matter/main/protocol";
 import type { HomeAssistantAction } from "../../services/home-assistant/home-assistant-actions.js";
 import { applyPatchState } from "../../utils/apply-patch-state.js";
+import { AsyncObservable } from "../../utils/async-observable.js";
 import { Temperature } from "../../utils/converters/temperature.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import {
+  initializeRepeatedAttributes,
+  type RepeatedAttributeRequest,
+  repeatedAttributeProperties,
+} from "./utils/repeated-attributes.js";
 
 import SystemMode = Thermostat.SystemMode;
 import RunningMode = Thermostat.ThermostatRunningMode;
@@ -50,6 +58,7 @@ export interface ThermostatServerConfig {
 
 export class ThermostatServerBase extends FeaturedBase {
   declare state: ThermostatServerBase.State;
+  declare events: ThermostatServerBase.Events;
 
   override async initialize() {
     this.state.controlSequenceOfOperation =
@@ -78,6 +87,7 @@ export class ThermostatServerBase extends FeaturedBase {
       );
     }
     this.reactTo(homeAssistant.onChange, this.update);
+    this.reactTo(this.events.repeatedCommands$Changed, this.repeatCommand);
   }
 
   private buildSetpointLimits(
@@ -134,6 +144,30 @@ export class ThermostatServerBase extends FeaturedBase {
         : {}),
       ...(deadband > 0 ? { minSetpointDeadBand: deadband } : {}),
     };
+  }
+
+  private repeatCommand(
+    requests: Record<string, RepeatedAttributeRequest> | undefined,
+    old: Record<string, RepeatedAttributeRequest> | undefined,
+    context?: ActionContext,
+  ) {
+    if (!requests || transactionIsOffline(context)) return;
+    for (const request of Object.values(requests)) {
+      if (request.sequence === old?.[request.attribute]?.sequence) continue;
+      const value = request.value;
+      if (value == null) continue;
+      switch (request.attribute) {
+        case "systemMode":
+          this.systemModeChanged(value, value, context);
+          break;
+        case "occupiedHeatingSetpoint":
+          this.heatingSetpointChanged(value, value, context);
+          break;
+        case "occupiedCoolingSetpoint":
+          this.coolingSetpointChanged(value, value, context);
+          break;
+      }
+    }
   }
 
   private update(entity: HomeAssistantEntityInformation) {
@@ -353,8 +387,44 @@ export class ThermostatServerBase extends FeaturedBase {
   }
 }
 
+const baseThermostatProperties = new FeaturedBase.State()[Val.properties];
+
 export namespace ThermostatServerBase {
+  export class Events extends FeaturedBase.Events {
+    repeatedCommands$Changed = AsyncObservable<
+      Record<string, RepeatedAttributeRequest> | undefined
+    >();
+  }
+
   export class State extends FeaturedBase.State {
+    constructor() {
+      super();
+      initializeRepeatedAttributes(this, [
+        "systemMode",
+        "occupiedHeatingSetpoint",
+        "occupiedCoolingSetpoint",
+      ]);
+    }
+
+    commandAttributeValues: Record<string, number | null> = {};
+    repeatedCommands?: Record<string, RepeatedAttributeRequest>;
+
+    override [Val.properties] = (
+      endpoint: Endpoint,
+      session: ValueSupervisor.Session,
+    ) => {
+      return Object.defineProperties(
+        baseThermostatProperties.call(this, endpoint, session),
+        Object.getOwnPropertyDescriptors(
+          repeatedAttributeProperties(this, endpoint, session, "climate", [
+            "systemMode",
+            "occupiedHeatingSetpoint",
+            "occupiedCoolingSetpoint",
+          ]),
+        ),
+      );
+    };
+
     config!: ThermostatServerConfig;
   }
 }

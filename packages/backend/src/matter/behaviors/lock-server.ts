@@ -4,6 +4,7 @@ import { DoorLock } from "@matter/main/clusters";
 import { applyPatchState } from "../../utils/apply-patch-state.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import { repeatsCommands } from "./utils/repeat-commands.js";
 
 import LockState = DoorLock.LockState;
 
@@ -41,11 +42,29 @@ class LockServerBase extends Base {
   }
 
   override lockDoor() {
+    if (
+      !repeatsCommands(this.agent, "locks") &&
+      this.state.config.getLockState(
+        this.agent.get(HomeAssistantEntityBehavior).entity.state,
+        this.agent,
+      ) === LockState.Locked
+    ) {
+      return;
+    }
     const homeAssistant = this.agent.get(HomeAssistantEntityBehavior);
     homeAssistant.callAction(this.state.config.lock(void 0, this.agent));
   }
 
   override unlockDoor() {
+    if (
+      !repeatsCommands(this.agent, "locks") &&
+      this.state.config.getLockState(
+        this.agent.get(HomeAssistantEntityBehavior).entity.state,
+        this.agent,
+      ) === LockState.Unlocked
+    ) {
+      return;
+    }
     const homeAssistant = this.agent.get(HomeAssistantEntityBehavior);
     homeAssistant.callAction(this.state.config.unlock(void 0, this.agent));
   }

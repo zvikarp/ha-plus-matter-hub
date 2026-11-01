@@ -37,6 +37,7 @@ export const EditBridgePage = () => {
       countryCode: bridge.countryCode,
       filter: bridge.filter,
       featureFlags: bridge.featureFlags,
+      repeatCommands: bridge.repeatCommands,
     };
   }, [isLoading, bridge]);
 

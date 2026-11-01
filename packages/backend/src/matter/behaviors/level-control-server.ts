@@ -5,6 +5,7 @@ import { applyPatchState } from "../../utils/apply-patch-state.js";
 import type { FeatureSelection } from "../../utils/feature-selection.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import { repeatsCommands } from "./utils/repeat-commands.js";
 
 export interface LevelControlConfig {
   getValuePercent: ValueGetter<number | null>;
@@ -62,7 +63,10 @@ export class LevelControlServerBase extends FeaturedBase {
       homeAssistant.entity.state,
       this.agent,
     );
-    if (levelPercent === current) {
+    if (
+      levelPercent === current &&
+      !repeatsCommands(this.agent, "brightness")
+    ) {
       return;
     }
     homeAssistant.callAction(

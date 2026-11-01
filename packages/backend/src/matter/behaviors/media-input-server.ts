@@ -4,6 +4,7 @@ import { MediaInput } from "@matter/main/clusters";
 import { applyPatchState } from "../../utils/apply-patch-state.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import { repeatsCommands } from "./utils/repeat-commands.js";
 
 export interface MediaInputServerConfig {
   getCurrentSource: ValueGetter<string | undefined>;
@@ -47,6 +48,15 @@ class MediaInputServerBase extends Base {
   override selectInput(request: MediaInput.SelectInputRequest) {
     const homeAssistant = this.agent.get(HomeAssistantEntityBehavior);
     const target = this.state.inputList[request.index];
+    if (
+      !repeatsCommands(this.agent, "mediaInputs") &&
+      this.state.config.getCurrentSource(
+        homeAssistant.entity.state,
+        this.agent,
+      ) === target.name
+    ) {
+      return;
+    }
     homeAssistant.callAction(
       this.state.config.selectSource(target.name, this.agent),
     );

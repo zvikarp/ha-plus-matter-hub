@@ -11,6 +11,7 @@ import { WindowCovering } from "@matter/main/clusters";
 import { applyPatchState } from "../../utils/apply-patch-state.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import { repeatsCommands } from "./utils/repeat-commands.js";
 
 import MovementStatus = WindowCovering.MovementStatus;
 
@@ -139,6 +140,22 @@ export class WindowCoveringServerBase extends FeaturedBase {
     direction: MovementDirection,
     targetPercent100ths?: number,
   ) {
+    if (repeatsCommands(this.agent, "shades")) {
+      const close =
+        direction === MovementDirection.Close &&
+        (targetPercent100ths == null || targetPercent100ths === 10000);
+      const open =
+        direction === MovementDirection.Open &&
+        (targetPercent100ths == null || targetPercent100ths === 0);
+      if (close || open) {
+        if (type === MovementType.Lift) {
+          close ? this.handleLiftClose() : this.handleLiftOpen();
+        } else if (type === MovementType.Tilt) {
+          close ? this.handleTiltClose() : this.handleTiltOpen();
+        }
+        return;
+      }
+    }
     const currentLift = this.state.currentPositionLiftPercent100ths ?? 0;
     const currentTilt = this.state.currentPositionTiltPercent100ths ?? 0;
     if (type === MovementType.Lift) {
@@ -193,7 +210,10 @@ export class WindowCoveringServerBase extends FeaturedBase {
       this.agent,
     );
     const targetPosition = targetPercent100ths / 100;
-    if (targetPosition === currentPosition) {
+    if (
+      targetPosition === currentPosition &&
+      !repeatsCommands(this.agent, "shades")
+    ) {
       return;
     }
     homeAssistant.callAction(
@@ -223,7 +243,10 @@ export class WindowCoveringServerBase extends FeaturedBase {
       this.agent,
     );
     const targetPosition = targetPercent100ths / 100;
-    if (targetPosition === currentPosition) {
+    if (
+      targetPosition === currentPosition &&
+      !repeatsCommands(this.agent, "shades")
+    ) {
       return;
     }
     homeAssistant.callAction(

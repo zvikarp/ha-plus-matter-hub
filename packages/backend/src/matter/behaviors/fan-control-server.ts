@@ -1,13 +1,20 @@
 import type { HomeAssistantEntityInformation } from "@ha-plus-matter-hub/common";
-import type { ActionContext } from "@matter/main";
+import type { ActionContext, Endpoint, ValueSupervisor } from "@matter/main";
 import { FanControlServer as Base } from "@matter/main/behaviors";
 import { FanControl } from "@matter/main/clusters";
+import { Val } from "@matter/main/protocol";
 import { applyPatchState } from "../../utils/apply-patch-state.js";
+import { AsyncObservable } from "../../utils/async-observable.js";
 import { FanMode } from "../../utils/converters/fan-mode.js";
 import { FanSpeed } from "../../utils/converters/fan-speed.js";
 import { transactionIsOffline } from "../../utils/transaction-is-offline.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import {
+  initializeRepeatedAttributes,
+  type RepeatedAttributeRequest,
+  repeatedAttributeProperties,
+} from "./utils/repeated-attributes.js";
 
 import AirflowDirection = FanControl.AirflowDirection;
 
@@ -34,12 +41,14 @@ export interface FanControlServerConfig {
 
 export class FanControlServerBase extends FeaturedBase {
   declare state: FanControlServerBase.State;
+  declare events: FanControlServerBase.Events;
 
   override async initialize() {
     super.initialize();
     const homeAssistant = await this.agent.load(HomeAssistantEntityBehavior);
     this.update(homeAssistant.entity);
     this.reactTo(homeAssistant.onChange, this.update);
+    this.reactTo(this.events.repeatedCommands$Changed, this.repeatCommand);
     this.reactTo(
       this.events.percentSetting$Changed,
       this.targetPercentSettingChanged,
@@ -56,6 +65,33 @@ export class FanControlServerBase extends FeaturedBase {
         this.events.airflowDirection$Changed,
         this.targetAirflowDirectionChanged,
       );
+    }
+  }
+
+  private repeatCommand(
+    requests: Record<string, RepeatedAttributeRequest> | undefined,
+    old: Record<string, RepeatedAttributeRequest> | undefined,
+    context?: ActionContext,
+  ) {
+    if (!requests || transactionIsOffline(context)) return;
+    for (const request of Object.values(requests)) {
+      if (request.sequence === old?.[request.attribute]?.sequence) continue;
+      const value = request.value;
+      switch (request.attribute) {
+        case "percentSetting":
+          this.targetPercentSettingChanged(value, value, context);
+          break;
+        case "speedSetting":
+          this.targetSpeedSettingChanged(value, value, context);
+          break;
+        case "fanMode":
+          if (value != null) this.targetFanModeChanged(value, value, context);
+          break;
+        case "airflowDirection":
+          if (value != null)
+            this.targetAirflowDirectionChanged(value, value, context);
+          break;
+      }
     }
   }
 
@@ -203,7 +239,40 @@ export class FanControlServerBase extends FeaturedBase {
 }
 
 export namespace FanControlServerBase {
+  export class Events extends FeaturedBase.Events {
+    repeatedCommands$Changed = AsyncObservable<
+      Record<string, RepeatedAttributeRequest> | undefined
+    >();
+  }
+
   export class State extends FeaturedBase.State {
+    constructor() {
+      super();
+      initializeRepeatedAttributes(this, [
+        "percentSetting",
+        "fanMode",
+        "speedSetting",
+        "airflowDirection",
+      ]);
+    }
+
+    commandAttributeValues: Record<string, number | null> = {};
+    repeatedCommands?: Record<string, RepeatedAttributeRequest>;
+
+    [Val.properties](endpoint: Endpoint, session: ValueSupervisor.Session) {
+      return Object.defineProperties(
+        {},
+        Object.getOwnPropertyDescriptors(
+          repeatedAttributeProperties(this, endpoint, session, "fans", [
+            "percentSetting",
+            "fanMode",
+            "speedSetting",
+            "airflowDirection",
+          ]),
+        ),
+      );
+    }
+
     config!: FanControlServerConfig;
   }
 }
