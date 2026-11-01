@@ -7,11 +7,27 @@ interface AllBridgeFeatureFlags {
 
 export type BridgeFeatureFlags = Partial<AllBridgeFeatureFlags>;
 
+/** Defaults preserve the command behavior of existing bridges. */
+export const repeatCommandDefaults = {
+  shades: false,
+  brightness: false,
+  color: false,
+  climate: false,
+  fans: false,
+  onOff: true,
+  locks: true,
+  mediaInputs: true,
+} as const;
+
+export type RepeatCommandCategory = keyof typeof repeatCommandDefaults;
+export type RepeatCommands = Partial<Record<RepeatCommandCategory, boolean>>;
+
 export interface BridgeConfig {
   readonly name: string;
   readonly port: number;
   readonly filter: HomeAssistantFilter;
   readonly featureFlags?: BridgeFeatureFlags;
+  readonly repeatCommands?: RepeatCommands;
   readonly countryCode?: string;
 }
 

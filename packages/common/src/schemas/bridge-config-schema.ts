@@ -1,4 +1,5 @@
 import type { JSONSchema7 } from "json-schema";
+import { repeatCommandDefaults } from "../bridge-data.js";
 import { HomeAssistantMatcherType } from "../home-assistant-filter.js";
 
 const homeAssistantMatcherSchema: JSONSchema7 = {
@@ -87,6 +88,34 @@ export const bridgeConfigSchema: JSONSchema7 = {
     },
     filter: homeAssistantFilterSchema,
     featureFlags: featureFlagSchema,
+    repeatCommands: {
+      title: "Repeat matching commands",
+      description:
+        "Forward requests even when Home Assistant already reports the requested value. Useful after manual control. Applies only to requests the bridge receives; status updates are never replayed. Unchecked categories skip matching requests. Defaults preserve existing behavior.",
+      type: "object",
+      default: {},
+      properties: Object.fromEntries(
+        Object.entries({
+          shades: "Shades — open, close, position and tilt",
+          brightness: "Brightness and volume levels",
+          color: "Light color and color temperature",
+          climate: "Climate — operating mode and target temperature",
+          fans: "Fans — mode, speed and direction",
+          onOff: "On/off — lights, switches and other devices",
+          locks: "Locks — lock and unlock",
+          mediaInputs: "Media input selection",
+        }).map(([key, title]) => [
+          key,
+          {
+            title,
+            type: "boolean",
+            default:
+              repeatCommandDefaults[key as keyof typeof repeatCommandDefaults],
+          },
+        ]),
+      ),
+      additionalProperties: false,
+    },
   },
   required: ["name", "port", "filter"],
   additionalProperties: false,

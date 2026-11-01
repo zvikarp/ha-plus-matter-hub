@@ -4,6 +4,7 @@ import type {
   BridgeFeatureFlags,
   BridgeStatus,
   HomeAssistantFilter,
+  RepeatCommands,
   UpdateBridgeRequest,
 } from "@ha-plus-matter-hub/common";
 import type { ServerNode } from "@matter/main/node";
@@ -44,6 +45,9 @@ export class BridgeDataProvider extends Service implements BridgeData {
   get featureFlags(): BridgeFeatureFlags | undefined {
     return this.data.featureFlags;
   }
+  get repeatCommands(): RepeatCommands | undefined {
+    return this.data.repeatCommands;
+  }
   get countryCode(): string | undefined {
     return this.data.countryCode;
   }
@@ -73,6 +77,7 @@ export class BridgeDataProvider extends Service implements BridgeData {
       filter: this.filter,
       port: this.port,
       featureFlags: this.featureFlags,
+      repeatCommands: this.repeatCommands,
       basicInformation: this.basicInformation,
       countryCode: this.countryCode,
       status: status.code,

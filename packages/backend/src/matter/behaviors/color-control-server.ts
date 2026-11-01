@@ -8,6 +8,7 @@ import type { ColorInstance } from "color";
 import { applyPatchState } from "../../utils/apply-patch-state.js";
 import { HomeAssistantEntityBehavior } from "./home-assistant-entity-behavior.js";
 import type { ValueGetter, ValueSetter } from "./utils/cluster-config.js";
+import { repeatsCommands } from "./utils/repeat-commands.js";
 
 export type ColorControlMode =
   | ColorControl.ColorMode.CurrentHueAndCurrentSaturation
@@ -103,7 +104,10 @@ export class ColorControlServerBase extends FeaturedBase {
     );
     const targetKelvin = ColorConverter.temperatureMiredsToKelvin(targetMireds);
 
-    if (currentKelvin === targetKelvin) {
+    if (
+      currentKelvin === targetKelvin &&
+      !repeatsCommands(this.agent, "color")
+    ) {
       return;
     }
 
@@ -131,7 +135,11 @@ export class ColorControlServerBase extends FeaturedBase {
     const [currentHue, currentSaturation] = haColor
       ? ColorConverter.toMatterHS(haColor)
       : [];
-    if (currentHue === targetHue && currentSaturation === targetSaturation) {
+    if (
+      currentHue === targetHue &&
+      currentSaturation === targetSaturation &&
+      !repeatsCommands(this.agent, "color")
+    ) {
       return;
     }
     const color = ColorConverter.fromMatterHS(targetHue, targetSaturation);

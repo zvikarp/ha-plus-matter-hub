@@ -110,3 +110,51 @@ Example configuration:
 > - `{{ areas() }}` - returns all areas
 
 If you can’t get it working with your labels, you can delete your label and re-create it.
+
+## Repeat matching commands
+
+Open the app's **Open Web UI** in Home Assistant, edit a bridge, and find
+**Repeat matching commands**. Each checkbox controls whether a request is
+forwarded when Home Assistant already reports the requested value. These are
+per-bridge settings and are saved with the rest of the bridge configuration.
+
+| Category | Default | Requests controlled |
+| --- | --- | --- |
+| Shades | Off | Matching position and tilt targets, including open/close on position-capable shades |
+| Brightness and volume levels | Off | Matching level targets |
+| Light color and color temperature | Off | Matching hue/saturation and temperature targets |
+| Climate | Off | Matching operating mode and target temperature writes |
+| Fans | Off | Matching mode, speed and direction writes |
+| On/off | On | Matching on/off commands for lights, switches and other devices |
+| Locks | On | Matching lock/unlock commands |
+| Media input selection | On | Selecting the current input again |
+
+The defaults preserve existing bridge behavior. For shades controlled by a
+separate remote, enable **Shades** so stale position estimates do not prevent
+received open/close and position requests from reaching Home Assistant. Stop
+commands and relative commands keep their existing behavior. Shade commands
+without position feedback continue to be forwarded because there is no matching
+position to compare.
+
+A checked setting forwards received requests; it does not automatically retry,
+poll, or replay Home Assistant status updates. Google or another controller may
+still choose not to send a request. The existing short action debounce remains
+in place, so rapid requests for the same action may be combined.
+
+The JSON editor exposes the same optional `repeatCommands` object, for example:
+
+```json
+"repeatCommands": {
+  "shades": true,
+  "brightness": false,
+  "color": false,
+  "climate": false,
+  "fans": false,
+  "onOff": true,
+  "locks": true,
+  "mediaInputs": true
+}
+```
+
+Omitted categories use the defaults above; existing configurations do not need a
+migration.
