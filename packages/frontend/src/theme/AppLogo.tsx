@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { capitalize } from "@mui/material/utils";
 import { Link } from "react-router";
-import logo from "../assets/hamh-logo.png";
+import Logo from "../assets/hamh-logo-monochrome.svg?react";
 import { useAppInfo } from "../hooks/app-info.ts";
 import { navigation } from "../routes.tsx";
 
@@ -22,7 +22,16 @@ export const AppLogo = (props: { large: boolean }) => {
         color: "inherit",
       }}
     >
-      <Box component="img" src={logo} alt="" sx={{ height: "40px" }} />
+      <Box
+        component={Logo}
+        aria-hidden="true"
+        sx={{
+          height: "40px",
+          width: "40px",
+          flexShrink: 0,
+          fill: "currentColor",
+        }}
+      />
       <Typography variant="inherit" component="span" sx={{ mr: 1, ml: 1 }}>
         {appInfo.name.split("-").map(capitalize).join("-")}
       </Typography>
