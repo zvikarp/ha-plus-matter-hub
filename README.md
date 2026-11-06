@@ -32,6 +32,17 @@ of port forwarding etc.
 
 ---
 
+## Installation
+
+Install **HA+ Matter Hub** through **Settings → Marketplace** in Home Assistant
+2026.11 or newer. Add this repository as a custom **Integration** repository,
+install it, and add HA+ Matter Hub under **Devices & services**. The integration
+manages the Matter engine and provides an admin sidebar panel; no HA App is needed.
+
+See the [installation and App migration guide](./docs/Getting%20Started/Installation.md)
+before moving an existing paired bridge. For branch testing, the **Build
+Marketplace test package** workflow produces a complete installable ZIP.
+
 ## Documentation
 
 Please see the [documentation](https://zvikarp.github.io/ha-plus-matter-hub) for installation instructions,

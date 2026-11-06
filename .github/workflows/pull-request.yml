@@ -22,6 +22,15 @@ jobs:
         uses: ./.github/actions/setup-node
         id: setup
 
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - name: Check Marketplace integration
+        run: |
+          pip install -r requirements-test.txt
+          python -m ruff check custom_components scripts tests
+          python -m pytest
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
@@ -37,47 +46,13 @@ jobs:
           SHORT_SHA=$(git rev-parse --short=12 HEAD)
           echo "package-version=0.0.0-dev.${SHORT_SHA}" >> "$GITHUB_OUTPUT"
 
+      - name: Package Marketplace integration
+        run: |
+          python3 scripts/package-marketplace.py
+          python -m pytest
+
       - name: Package Artifact
         uses: actions/upload-artifact@v5
         with:
-          name: package.tgz
-          path: apps/ha-plus-matter-hub/package.tgz
-
-  prepare-docker:
-    name: "Prepare Docker"
-    runs-on: ubuntu-latest
-    outputs:
-      dockerfiles: ${{ steps.dockerfiles.outputs.dockerfiles }}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Find Dockerfiles
-        id: dockerfiles
-        uses: ./.github/actions/find-dockerfiles
-
-  docker:
-    name: "Build Docker"
-    runs-on: ubuntu-24.04-arm
-    needs: [prepare-docker, verify]
-    strategy:
-      matrix:
-        dockerfile: ${{ fromJSON(needs.prepare-docker.outputs.dockerfiles) }}
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Docker
-        uses: ./.github/actions/setup-docker
-
-      - name: Package Artifact
-        uses: actions/download-artifact@v6
-        with:
-          name: package.tgz
-          path: apps/ha-plus-matter-hub/
-          merge-multiple: true
-
-      - name: Build Docker
-        uses: ./.github/actions/docker
-        with:
-          dockerfile: ${{ matrix.dockerfile }}
-          node-version: ${{ needs.verify.outputs.node-version }}
-          package-version: ${{ needs.verify.outputs.package-version }}
-          channel: "dev"
+          name: marketplace-integration
+          path: ha_plus_matter_hub.zip

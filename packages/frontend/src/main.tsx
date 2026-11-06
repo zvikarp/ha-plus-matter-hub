@@ -1,7 +1,7 @@
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StateProvider } from "react-redux";
-import { createBrowserRouter } from "react-router";
+import { createBrowserRouter, createHashRouter } from "react-router";
 import { RouterProvider } from "react-router/dom";
 
 import "@fontsource/roboto/300.css";
@@ -28,7 +28,10 @@ if (basename?.startsWith("http")) {
   basename = new URL(basename).pathname;
 }
 
-const router = createBrowserRouter(
+const marketplace =
+  window.parent !== window &&
+  new URLSearchParams(window.location.search).get("ha_plus_panel") === "1";
+const router = (marketplace ? createHashRouter : createBrowserRouter)(
   [
     {
       path: "/",
@@ -38,7 +41,7 @@ const router = createBrowserRouter(
     },
   ],
   {
-    basename,
+    basename: marketplace ? undefined : basename,
   },
 );
 

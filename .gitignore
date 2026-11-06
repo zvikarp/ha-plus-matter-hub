@@ -27,3 +27,12 @@ apps/ha-plus-matter-hub/LICENSE
 
 *.tsbuildinfo
 tmp/
+
+# Marketplace runtime artifacts and Python tooling
+custom_components/ha_plus_matter_hub/runtime/
+ha_plus_matter_hub.zip
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+.venv/

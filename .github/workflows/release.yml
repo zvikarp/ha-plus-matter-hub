@@ -26,6 +26,15 @@ jobs:
         id: setup
         uses: ./.github/actions/setup-node
 
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - name: Check Marketplace integration
+        run: |
+          pip install -r requirements-test.txt
+          python -m ruff check custom_components scripts tests
+          python -m pytest
+
       - name: Install Dependencies
         run: pnpm install --frozen-lockfile
 
@@ -48,7 +57,7 @@ jobs:
           RELEASE_CHANNEL=$([ -f RELEASE_CHANNEL ] && cat RELEASE_CHANNEL || echo '')
           RELEASE_RECOVERED=false
 
-          # A rerun after a container failure must reuse the release tag at HEAD.
+          # A rerun after an artifact upload failure must reuse the release tag at HEAD.
           if [ -z "$RELEASE_VERSION" ]; then
             RELEASE_TAG=$(git tag --points-at HEAD --list 'v*' --sort=-v:refname | head -n 1)
             if [ -n "$RELEASE_TAG" ]; then
@@ -75,71 +84,25 @@ jobs:
         if: ${{ steps.release.outputs.release-recovered == 'true' }}
         env:
           APP_VERSION: ${{ steps.release.outputs.release-version }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           pnpm run release:version "$APP_VERSION"
           pnpm run release:pack
+          python3 scripts/package-marketplace.py --version "$APP_VERSION"
+          python3 -m pytest
+          gh release upload "v$APP_VERSION" ha_plus_matter_hub.zip --clobber
 
       - name: Package Artifact
         if: ${{ steps.release.outputs.release-version != '' }}
         uses: actions/upload-artifact@v5
         with:
-          name: package.tgz
-          path: apps/ha-plus-matter-hub/package.tgz
+          name: marketplace-integration
+          path: ha_plus_matter_hub.zip
       - name: Upload Documentation
         if: ${{ steps.release.outputs.release-version != '' && steps.release.outputs.release-channel == 'latest' }}
         uses: actions/upload-pages-artifact@v4
         with:
           path: "./docs/_build/html"
-
-  prepare-docker:
-    name: "Prepare Docker"
-    runs-on: ubuntu-latest
-    outputs:
-      dockerfiles: ${{ steps.dockerfiles.outputs.dockerfiles }}
-    steps:
-      - uses: actions/checkout@v6
-      - name: Find Dockerfiles
-        id: dockerfiles
-        uses: ./.github/actions/find-dockerfiles
-
-  docker:
-    name: "Build Docker"
-    runs-on: ubuntu-24.04-arm
-    needs: [prepare-docker, release]
-    if: ${{ needs.release.outputs.release-version != '' }}
-    permissions:
-      packages: write
-    strategy:
-      matrix:
-        dockerfile: ${{ fromJSON(needs.prepare-docker.outputs.dockerfiles) }}
-    steps:
-      - uses: actions/checkout@v6
-
-      - name: Setup Docker
-        uses: ./.github/actions/setup-docker
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Package Artifact
-        uses: actions/download-artifact@v6
-        with:
-          name: package.tgz
-          path: apps/ha-plus-matter-hub/
-          merge-multiple: true
-
-      - name: Build Docker
-        uses: ./.github/actions/docker
-        with:
-          push: true
-          channel: ${{ needs.release.outputs.release-channel }}
-          dockerfile: ${{ matrix.dockerfile }}
-          node-version: ${{ needs.release.outputs.node-version }}
-          package-version: ${{ needs.release.outputs.release-version }}
 
   publish-pages:
     name: "Publish Documentation"
