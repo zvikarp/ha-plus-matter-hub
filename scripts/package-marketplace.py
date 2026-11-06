@@ -47,6 +47,17 @@ def package(version=None):
             ],
             check=True,
         )
+        # The engine resolves its CLI version from this runtime package.
+        runtime_manifest = json.loads((runtime / "package.json").read_text())
+        runtime_manifest["version"] = version
+        (runtime / "package.json").write_text(
+            json.dumps(runtime_manifest, indent=2) + "\n"
+        )
+        runtime_lock = json.loads((runtime / "package-lock.json").read_text())
+        runtime_lock["version"] = runtime_lock["packages"][""]["version"] = version
+        (runtime / "package-lock.json").write_text(
+            json.dumps(runtime_lock, indent=2) + "\n"
+        )
         shutil.copytree(engine, runtime / "dist")
         html = runtime / "dist/frontend/index.html"
         html.write_text(

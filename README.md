@@ -40,8 +40,24 @@ install it, and add HA+ Matter Hub under **Devices & services**. The integration
 manages the Matter engine and provides an admin sidebar panel; no HA App is needed.
 
 See the [installation and App migration guide](./docs/Getting%20Started/Installation.md)
-before moving an existing paired bridge. For branch testing, the **Build
-Marketplace test package** workflow produces a complete installable ZIP.
+before moving an existing paired bridge. **CI** produces a complete installable
+ZIP for branch testing.
+
+## Releases
+
+Like HA+ Modes, this repository has only **CI** and **Release** workflows.
+Run **Actions → Release** from `main` and choose **patch**, **minor**, or **major**.
+Release runs CI, prepares a stable version, commits the integration/engine/runtime
+version updates, builds the complete `ha_plus_matter_hub.zip`, and publishes a
+GitHub Release with generated notes for Marketplace/HACS updates. A source
+version already ahead of the latest stable release is released first; otherwise
+the selected bump applies to the latest stable release. Drafts and prereleases
+are excluded from stable version selection.
+
+Publishing a release manually runs CI and attaches the archive built from its tag;
+the tag must match the integration version. Merging code never publishes a
+release automatically. There is no separate test-package, semantic-release, or
+Pages publishing workflow.
 
 ## Documentation
 

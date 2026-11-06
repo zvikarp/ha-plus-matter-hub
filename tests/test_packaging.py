@@ -42,6 +42,12 @@ def test_built_release_contains_all_runtime_files():
             "__pycache__" in name or name.startswith("custom_components/")
             for name in names
         )
+        manifest = json.loads(archive.read("manifest.json"))
+        runtime = json.loads(archive.read("runtime/package.json"))
+        runtime_lock = json.loads(archive.read("runtime/package-lock.json"))
+        assert runtime["version"] == manifest["version"]
+        assert runtime_lock["version"] == manifest["version"]
+        assert runtime_lock["packages"][""]["version"] == manifest["version"]
         assert (
             "/ha_plus_matter_hub/ui/"
             in archive.read("runtime/dist/frontend/index.html").decode()

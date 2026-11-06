@@ -2,116 +2,119 @@ name: Release
 
 on:
   workflow_dispatch:
+    inputs:
+      bump:
+        description: Version bump after the latest release
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+  release:
+    types: [published]
 
 permissions:
   contents: read
 
+concurrency:
+  group: release
+  cancel-in-progress: false
+
 jobs:
+  verify:
+    uses: ./.github/workflows/ci.yml
+
   release:
+    if: github.event_name == 'workflow_dispatch'
+    needs: verify
+    runs-on: ubuntu-latest
     permissions:
       contents: write
-      issues: write
-    name: Create GitHub Release
-    runs-on: ubuntu-latest
-    outputs:
-      node-version: ${{ steps.setup.outputs.node-version }}
-      release-version: ${{ steps.release.outputs.release-version }}
-      release-channel: ${{ steps.release.outputs.release-channel }}
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
-
-      - name: Setup Environment
-        id: setup
-        uses: ./.github/actions/setup-node
-
+          ref: ${{ github.sha }}
       - uses: actions/setup-python@v6
         with:
           python-version: '3.14'
-      - name: Check Marketplace integration
+      - name: Require the main branch
+        if: github.ref != 'refs/heads/main'
         run: |
-          pip install -r requirements-test.txt
-          python -m ruff check custom_components scripts tests
-          python -m pytest
-
-      - name: Install Dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Lint
-        run: pnpm run lint
-      - name: Test
-        run: pnpm run test
-      - name: Build
-        run: pnpm run build
-
-      - name: Release
+          echo "Run releases from the main branch." >&2
+          exit 1
+      - name: Prepare the next version
+        id: version
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: pnpm run release
-
-      - name: Analyze Release
-        id: release
-        run: |
-          RELEASE_VERSION=$([ -f RELEASE_VERSION ] && cat RELEASE_VERSION || echo '')
-          RELEASE_CHANNEL=$([ -f RELEASE_CHANNEL ] && cat RELEASE_CHANNEL || echo '')
-          RELEASE_RECOVERED=false
-
-          # A rerun after an artifact upload failure must reuse the release tag at HEAD.
-          if [ -z "$RELEASE_VERSION" ]; then
-            RELEASE_TAG=$(git tag --points-at HEAD --list 'v*' --sort=-v:refname | head -n 1)
-            if [ -n "$RELEASE_TAG" ]; then
-              RELEASE_VERSION="${RELEASE_TAG#v}"
-              RELEASE_RECOVERED=true
-
-              if [[ "$RELEASE_VERSION" == *-* ]]; then
-                RELEASE_CHANNEL=$(echo "$RELEASE_VERSION" | sed -E 's/^[^-]+-([^.]+).*/\1/')
-              fi
-            fi
-          fi
-
-          # Stable releases have no semantic-release channel.
-          if [ -n "$RELEASE_VERSION" ] && [ -z "$RELEASE_CHANNEL" ]; then
-            RELEASE_CHANNEL="latest"
-          fi
-
-          echo "release-version=$RELEASE_VERSION" >> "$GITHUB_OUTPUT"
-          echo "release-channel=$RELEASE_CHANNEL" >> "$GITHUB_OUTPUT"
-          echo "release-recovered=$RELEASE_RECOVERED" >> "$GITHUB_OUTPUT"
-          cat "$GITHUB_OUTPUT"
-
-      - name: Rebuild Existing Release Artifact
-        if: ${{ steps.release.outputs.release-recovered == 'true' }}
+          BUMP: ${{ inputs.bump }}
+        run: python scripts/release.py prepare "$BUMP"
+      - name: Commit the version bump
         env:
-          APP_VERSION: ${{ steps.release.outputs.release-version }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ steps.version.outputs.tag }}
         run: |
-          pnpm run release:version "$APP_VERSION"
-          pnpm run release:pack
-          python3 scripts/package-marketplace.py --version "$APP_VERSION"
-          python3 -m pytest
-          gh release upload "v$APP_VERSION" ha_plus_matter_hub.zip --clobber
-
-      - name: Package Artifact
-        if: ${{ steps.release.outputs.release-version != '' }}
-        uses: actions/upload-artifact@v5
+          if git diff --quiet; then
+            echo "Version files already match ${TAG}."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add custom_components/ha_plus_matter_hub/manifest.json package.json apps/*/package.json packages/*/package.json docs/package.json marketplace/package.json marketplace/package-lock.json
+          git commit -m "chore: release ${TAG}"
+          git push origin HEAD:main
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
         with:
-          name: marketplace-integration
-          path: ha_plus_matter_hub.zip
-      - name: Upload Documentation
-        if: ${{ steps.release.outputs.release-version != '' && steps.release.outputs.release-channel == 'latest' }}
-        uses: actions/upload-pages-artifact@v4
-        with:
-          path: "./docs/_build/html"
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Build Marketplace engine
+        run: pnpm run release:pack
+        env:
+          APP_VERSION: ${{ steps.version.outputs.version }}
+      - name: Build Marketplace archive
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: python scripts/release.py package --tag "$TAG"
+      - name: Create GitHub release
+        env:
+          TAG: ${{ steps.version.outputs.tag }}
+        run: |
+          gh release create "$TAG" ha_plus_matter_hub.zip \
+            --target "$(git rev-parse HEAD)" \
+            --title "$TAG" \
+            --generate-notes
 
-  publish-pages:
-    name: "Publish Documentation"
+  package:
+    if: github.event_name == 'release'
+    needs: verify
     runs-on: ubuntu-latest
-    needs: [release]
-    if: ${{ needs.release.outputs.release-version != '' && needs.release.outputs.release-channel == 'latest' }}
     permissions:
-      id-token: write
-      pages: write
+      contents: write
     steps:
-      - name: Deploy documentation to GitHub Pages
-        uses: actions/deploy-pages@v4
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event.release.tag_name }}
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v6
+        with:
+          node-version: '24'
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Resolve engine version
+        run: python -c "import json,os; v=json.load(open('custom_components/ha_plus_matter_hub/manifest.json'))['version']; open(os.environ['GITHUB_ENV'],'a').write('APP_VERSION='+v+'\n')"
+      - name: Build Marketplace engine
+        run: pnpm run release:pack
+      - name: Build Marketplace archive
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: python scripts/release.py package --tag "$TAG"
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: ha_plus_matter_hub.zip
