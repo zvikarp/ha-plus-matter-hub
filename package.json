@@ -25,7 +25,7 @@
     "check-updates": "npx npm-check-updates --workspaces --root -u",
     "release": "semantic-release",
     "release:version": "pnpm version --workspaces --no-workspaces-update --no-git-tag-version --allow-same-version",
-    "release:pack": "pnpm --filter ha-plus-matter-hub run bundle"
+    "release:pack": "pnpm run build:app && pnpm --filter ha-plus-matter-hub run build"
   },
   "workspaces": [
     "apps/*",

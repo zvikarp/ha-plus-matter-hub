@@ -1,0 +1,27 @@
+name: Build Marketplace test package
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: ./.github/actions/setup-node
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - run: pnpm install --frozen-lockfile
+      - run: pip install -r requirements-test.txt
+      - run: python -m ruff check custom_components scripts tests
+      - run: python -m pytest
+      - run: pnpm lint
+      - run: pnpm test
+      - run: pnpm build
+      - run: python3 scripts/package-marketplace.py
+      - run: python -m pytest
+      - uses: actions/upload-artifact@v5
+        with:
+          name: marketplace-integration
+          path: ha_plus_matter_hub.zip

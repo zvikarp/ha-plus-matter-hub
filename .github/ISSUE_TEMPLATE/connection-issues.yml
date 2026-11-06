@@ -39,9 +39,9 @@ body:
       label: What deployment method do you use?
       multiple: false
       options:
-        - Home Assistant AddOn
-        - Docker
-        - Custom
+        - Marketplace integration
+        - Development integration ZIP
+        - Legacy App (migration)
     validations:
       required: true
   - type: checkboxes
@@ -51,8 +51,7 @@ body:
         - label: Does your network include any VLAN setup?
         - label: Do you have any special firewall rules / services in place?
         - label: Is IPv6 enabled in your LOCAL network?
-        - label: "If you are using the docker deployment: Is IPv6 enabled within your docker daemon config?"
-        - label: "If you are using the docker deployment: Do you run the container with host network?"
+        - label: "If Home Assistant Core runs in a container, does it have multicast and IPv6 connectivity?"
   - type: checkboxes
     attributes:
       label: "Documentation & Issues"

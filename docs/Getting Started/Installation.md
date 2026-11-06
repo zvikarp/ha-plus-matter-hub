@@ -1,122 +1,108 @@
 # Installation
 
-This application can be installed in different ways:
+HA+ Matter Hub installs through the **Home Assistant Marketplace** as a custom
+integration. The integration installs a pinned Node.js runtime and starts,
+supervises, and stops the Matter engine inside the Home Assistant environment.
+No Home Assistant App or separately managed server is required.
 
-1. Home-Assistant AddOn for Home Assistant OS (preferred)
-2. Manual Deployment
-   1. Ready to use Docker Image
-   2. Configuration options
+## Requirements
 
-> [!WARNING]
-> In order to successfully use this application, you need to ensure IPv6 is enabled properly.
-> In addition, the matter protocol is relying on mDNS and UDP. If you are using VLANs you need
-> to make sure that UDP (especially mDNS) packages are routed properly.
->
-> If you are facing issues, make sure to look at the [troubleshooting guide](../Guides/Connect%20Multiple%20Fabrics.md).
+- Home Assistant **2026.11 or newer** on a supported 64-bit system (Linux x86-64
+  or ARM64; the Node runtime also supplies macOS and Windows builds).
+- IPv6, UDP, and mDNS connectivity between Home Assistant and Matter controllers.
+- A long-lived access token for this Home Assistant instance. It is stored on the
+  server and passed to the managed engine; it is never sent to the sidebar UI.
 
-## 1. Native Home-Assistant AddOn
+Home Assistant OS already supplies the host networking used by Core. For Home
+Assistant Container, the Core container must have the network connectivity needed
+for Matter, including multicast and IPv6.
 
-> [!WARNING]
-> Home Assistant AddOns can only be used with Home Assistant OS.
+## Install from Marketplace
 
-Simply add the following GitHub Repository URL to your Home Assistant AddOn Store.
+1. Open **Settings → Marketplace**.
+2. Open **Custom repositories** and add
+   `https://github.com/zvikarp/ha-plus-matter-hub` as an **Integration**.
+3. Install **HA+ Matter Hub**, then restart Home Assistant if prompted.
+4. Open **Settings → Devices & services → Add integration** and search for
+   **HA+ Matter Hub**.
+5. Enter a URL at which this Home Assistant instance is reachable from Core and
+   a long-lived access token. For a local HTTP installation,
+   `http://127.0.0.1:8123` is suitable. Use the configured HTTPS URL when Core
+   serves HTTPS directly.
+6. Open **HA+ Matter Hub** in the sidebar to configure bridges and pair your
+   Matter controllers. The sidebar and management API are restricted to admins.
 
-> https://github.com/zvikarp/ha-plus
+This is a **custom repository** installation; it does not claim inclusion in the
+default Marketplace catalog. Marketplace still requires the compatibility
+filename `hacs.json`, which this repository supplies. Releases attach
+`ha_plus_matter_hub.zip`, containing the integration, UI, and locked JavaScript
+dependencies. Nothing runs npm or downloads the hub engine during setup.
 
-1. Open the UI of your Home Assistant instance
-2. Go to `Settings` -> `Add-Ons` -> `Add-On Store`
-3. Click the three dots in the top-right corner and select `Repositories`
-4. Paste the repository URL into the text-field and click "Add"
-5. Refresh your Add-On Store and Install the Add-On
-6. You can configure the log level in the AddOn configuration page
-7. Click "Start" to start the addon
-8. Follow the [Bridge configuration guide](Bridge%20Configuration.md)
+Create the access token from your Home Assistant profile's **Security →
+Long-lived access tokens** section. Use an account with the permissions needed
+for the entities you expose. To replace a revoked token, remove and add the
+integration again; the engine's stored bridge identities are preserved.
 
-## 2. Manual Deployment
+## Migrate an existing App installation
 
-### 2.1 Docker Image
+The App/container distribution is retired in this branch. Do not run the old
+App and the new integration at the same time with the same bridge identities.
 
-> [!WARNING]
-> Make sure your docker installation has IPv6 enabled, too.
-> See [this guide](https://fariszr.com/docker-ipv6-setup-with-propagation/) for more information.
+1. Back up the old App's configuration and data before changing it.
+2. Stop the old App and disable automatic startup. Keep it installed until the
+   migration is verified.
+3. Copy the **contents** of the old App's `/config/data` directory into
+   `<Home Assistant config>/.storage/ha_plus_matter_hub/` **before** setting up the
+   integration. The App's public configuration directory is normally under
+   `/addon_configs/<repository>_ha-plus-matter-hub/data` on the host. Copy all files
+   and subdirectories, including hidden files, with the engine stopped. The
+   integration does not require or read the old Supervisor token.
+4. Set up the integration with a Home Assistant access token, then verify that
+   your existing bridges and pairings work before removing the old App.
 
-This repository builds a docker image for every release. You can simply run it by using `docker-compose`:
+The entire engine storage directory is needed to retain Matter identities,
+fabrics, and pairings. Copying bridge filter settings alone is insufficient.
+The integration never deletes engine storage when unloaded or removed. Restoring
+the backup and restarting the old App (with the integration stopped) is the
+rollback path. No migration is performed automatically.
 
-```yaml
-services:
-  matter-hub:
-    image: ghcr.io/zvikarp/ha-plus-matter-hub:latest
-    restart: unless-stopped
-    network_mode: host
-    environment: # more options can be found in the configuration section
-      - HAMH_HOME_ASSISTANT_URL=http://192.168.178.123:8123/
-      - HAMH_HOME_ASSISTANT_ACCESS_TOKEN=ey...ZI
-      - HAMH_LOG_LEVEL=info
-      - HAMH_HTTP_PORT=8482
-    volumes:
-      - $PWD/ha-plus-matter-hub:/data
+## Development and testing
+
+For a test package without publishing a release, run **Build Marketplace test
+package** from GitHub Actions on your development branch. Download the
+`marketplace-integration` artifact and extract `ha_plus_matter_hub.zip` from it.
+With Home Assistant stopped, extract the contents of that inner ZIP into
+`custom_components/ha_plus_matter_hub/`, then start Home Assistant and add the
+integration. Use a separate test Home Assistant instance and independent bridge
+storage when testing alongside production.
+
+To build the same package locally:
+
+```sh
+pnpm install --frozen-lockfile
+pnpm build
+python3 scripts/package-marketplace.py
 ```
 
-Having that you can simply run `docker compose up -d` to start the container.
+The generated ZIP can be installed with the same manual extraction procedure.
+The build also populates `custom_components/ha_plus_matter_hub/runtime/` for local
+integration development. These generated files are not committed. A raw source
+checkout without the build output cannot start the hub.
 
-For the docker image, data is stored in `/data`, so you can mount a volume there for persistence.
+Run integration checks with Python 3.14:
 
-Alternatively, you can also run the container as follows:
-
-```bash
-docker run -d \
-  # more options can be found in the configuration section
-  # required: the address of your home assistant instance
-  -e HAMH_HOME_ASSISTANT_URL="http://192.168.178.123:8123/" \
-  # required: a long lived access token for your home assistant instance
-  -e HAMH_HOME_ASSISTANT_ACCESS_TOKEN="eyJ.....dlc" \
-  # optional: debug | info | warn | error
-  # default: info
-  -e HAMH_LOG_LEVEL="info" \
-  # optional: the port to use for the web ui
-  # default: 8482
-  -e HAMH_HTTP_PORT=8482 \
-  # recommended: persist the configuration and application data
-  -v $PWD/ha-plus-matter-hub:/data \
-  # required due to restrictions in matter
-  --network=host \
-  ghcr.io/zvikarp/ha-plus-matter-hub:latest
+```sh
+python3.14 -m venv .venv
+.venv/bin/pip install -r requirements-test.txt
+.venv/bin/python -m pytest
 ```
 
-See 2.2 for more configuration options.
+Updating the integration replaces its code and bundled engine; it preserves
+storage under `.storage/ha_plus_matter_hub`. Restart Home Assistant after Python
+or dependency changes. Reloading the integration restarts the managed engine but
+does not reload Python modules; refresh the browser after frontend changes.
 
-Now you can go ahead and follow the [bridge configuration guide](./Bridge%20Configuration.md).
-
-### 2.2 Configuration options
-
-General app configuration is done using the command line interface or environment variables. The following parameters
-are available:
-
-```
-ha-plus-matter-hub start
-
-start the application
-
-Options:
-  --help                         Show help                                                                                         [boolean]
-  --config                       Provide the path to a configuration JSON file, which can include all the other command options. You can use
-                                  kebabcase ("log-level") or camelcase ("logLevel").
-  --log-level                                                [string] [choices: "silly", "debug", "info", "warn", "error"] [default: "info"]
-  --disable-log-colors                                                                                            [boolean] [default: false]
-  --storage-location             Path to a directory where the application should store its data. Defaults to $HOME/.home-assistant-matter-h
-                                 ub                                                                                                 [string]
-  --http-port, --web-port        Port used by the web application. 'http-port' is recommended, 'web-port' is deprecated and will be removed
-                                 in the future.                                                                     [number] [default: 8482]
-  --http-auth-username           Username for HTTP basic authentication                                                             [string]
-  --http-auth-password           Password for HTTP basic authentication                                                             [string]
-  --http-ip-whitelist            Only allow the specified IPv4, IPv6 or CIDR. You can specify this option multiple times. When configured vi
-                                 a ENV variables, you can only specify ONE value. Defaults to allow every IP address.                [array]
-  --mdns-network-interface       Limit mDNS to this network interface                                                               [string]
-  --home-assistant-url           The HTTP-URL of your Home Assistant URL                                                 [string] [required]
-  --home-assistant-access-token  A long-lived access token for your Home Assistant Instance                              [string] [required]
-```
-
-Each of those configuration options can be configured via environment variables, too. Simply prefix them with `HAMH_`
-and write them in capslock with underscores (e.g. `HAMH_MDNS_NETWORK_INTERFACE`).
-
-**Those configuration options are not needed for the Home Assistant Addon Installation type.**
+For Marketplace-managed beta testing, publish a pre-release from the `beta`
+branch with the **Release** workflow and enable the repository's **Pre-release**
+switch in Marketplace. The normal `main` release publishes the stable integration
+ZIP. The branch test-package workflow above does not publish a release.

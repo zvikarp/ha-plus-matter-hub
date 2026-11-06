@@ -1,0 +1,22 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up HA+ Matter Hub",
+        "description": "The integration installs and manages the Matter engine. Stop the old Matter Hub App before starting this integration. Enter a long-lived access token for this Home Assistant instance; it stays on the server.",
+        "data": {
+          "url": "Home Assistant URL",
+          "access_token": "Long-lived access token"
+        }
+      }
+    },
+    "error": {
+      "invalid_url": "Enter a valid HTTP or HTTPS Home Assistant URL.",
+      "invalid_auth": "The access token was rejected.",
+      "cannot_connect": "Cannot connect to Home Assistant."
+    },
+    "abort": {
+      "already_configured": "Matter Hub is already configured."
+    }
+  }
+}

@@ -7,7 +7,7 @@
 
 ## Overview
 
-HA+ Matter Hub (HAMH) is an addon for Home Assistant that acts as a Matter bridge, exposing Home Assistant devices to Matter controllers (Alexa, Apple Home, Google Home) via local communication. No cloud or custom skills are required.
+HA+ Matter Hub (HAMH) is a Marketplace integration for Home Assistant that acts as a Matter bridge, exposing Home Assistant devices to Matter controllers (Alexa, Apple Home, Google Home) via local communication. No cloud or custom skills are required.
 
 This documentation is intended for developers taking over or contributing to the project. It covers architecture, technologies, and key concepts, especially those related to the Matter protocol and bridging logic.
 
@@ -31,7 +31,7 @@ This documentation is intended for developers taking over or contributing to the
 - **@matter/main, @matter/nodejs, @matter/general**: Libraries implementing the Matter protocol and device abstractions.
 - **home-assistant-js-websocket**: Integration with Home Assistant's API.
 - **Ajv**: JSON schema validation for API requests.
-- **Docker**: Containerization for deployment.
+- **Python / Home Assistant**: Configuration, authenticated admin panel, and managed Node.js lifecycle.
 
 ---
 
@@ -132,7 +132,7 @@ Exposed via Express (`matterApi`):
 - **Matter concepts**: Familiarize yourself with Matter node, endpoint, aggregator, and cluster abstractions in `@matter` libraries.
 - **Entity mapping**: Review how Home Assistant entities are mapped to endpoints and behaviors.
 - **Frontend**: UI is in React, communicates with backend via REST API.
-- **Docker**: Use provided Dockerfiles for deployment/testing.
+- **Marketplace**: Build the complete integration ZIP with `python3 scripts/package-marketplace.py` after `pnpm build`.
 - **Testing**: Use provided scripts and test files for backend logic.
 
 ---

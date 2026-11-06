@@ -1,0 +1,6 @@
+{
+  "name": "HA+ Matter Hub",
+  "homeassistant": "2026.11.0",
+  "zip_release": true,
+  "filename": "ha_plus_matter_hub.zip"
+}

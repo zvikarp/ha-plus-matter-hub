@@ -3,10 +3,9 @@
 Using the User Interface you can set up multiple bridges and configure each to use different filters for your entities.
 Each bridge will be completely independent of the others and uses its own port for matter.
 
-You can access the bridge configuration by opening the web UI:
-
-- If you are running the Home Assistant Add On: click on `Open Web UI`
-- If you are running the docker container: open `host-ip:port` (default port is 8482 if you didn't change it)
+Open **HA+ Matter Hub** in the Home Assistant sidebar to access the bridge
+configuration. The panel is available to administrators after the Marketplace
+integration is configured.
 
 > [!NOTE]
 > You can use **one** bridge to connect to **multiple** controllers.
@@ -57,7 +56,7 @@ Labels have to be applied at an entity level, not under device.
 
 > [!WARNING]
 > When performing changes on entities, like adding or removing a label, you need to refresh the matter-hub application
-> for the changes to take effect (e.g. edit the bridge or restart the addon).
+> for the changes to take effect (e.g. edit the bridge or reload the integration).
 
 Example configuration:
 
@@ -113,7 +112,7 @@ If you can’t get it working with your labels, you can delete your label and re
 
 ## Repeat matching commands
 
-Open the app's **Open Web UI** in Home Assistant, edit a bridge, and find
+Open **HA+ Matter Hub** in the Home Assistant sidebar, edit a bridge, and find
 **Repeat matching commands**. Each checkbox controls whether a request is
 forwarded when Home Assistant already reports the requested value. These are
 per-bridge settings and are saved with the rest of the bridge configuration.

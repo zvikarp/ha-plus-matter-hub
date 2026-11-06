@@ -13,6 +13,7 @@ import { webUi } from "./web-ui.js";
 
 export interface WebApiProps {
   readonly port: number;
+  readonly host?: string;
   readonly whitelist: string[] | undefined;
   readonly webUiDist?: string;
   readonly auth?: {
@@ -98,12 +99,15 @@ export class WebApi extends Service {
       return;
     }
     this.server = await new Promise((resolve) => {
-      const server = this.app.listen(this.props.port, () => {
-        this.log.info(
-          `HTTP server (API ${this.props.webUiDist ? "& Web App" : "only"}) listening on port ${this.props.port}`,
-        );
-        resolve(server);
-      });
+      const server = this.app.listen(
+        { port: this.props.port, host: this.props.host },
+        () => {
+          this.log.info(
+            `HTTP server (API ${this.props.webUiDist ? "& Web App" : "only"}) listening on port ${this.props.port}`,
+          );
+          resolve(server);
+        },
+      );
     });
   }
 }

@@ -1,7 +1,18 @@
 {
-  "branches": ["main", { "name": "beta", "prerelease": true }],
+  "branches": [
+    "main",
+    {
+      "name": "beta",
+      "prerelease": true
+    }
+  ],
   "plugins": [
-    ["@semantic-release/commit-analyzer", { "preset": "conventionalcommits" }],
+    [
+      "@semantic-release/commit-analyzer",
+      {
+        "preset": "conventionalcommits"
+      }
+    ],
     ["@semantic-release/release-notes-generator"],
     [
       "@semantic-release/exec",
@@ -9,25 +20,41 @@
         "prepareCmd": "gh release download \"v${lastRelease.version}\" -p \"CHANGELOG_FULL.md\" || echo \"No previous changelog found\""
       }
     ],
-    ["@semantic-release/changelog", { "changelogFile": "CHANGELOG.md" }],
-    ["@semantic-release/changelog", { "changelogFile": "CHANGELOG_FULL.md" }],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG.md"
+      }
+    ],
+    [
+      "@semantic-release/changelog",
+      {
+        "changelogFile": "CHANGELOG_FULL.md"
+      }
+    ],
     [
       "@semantic-release/github",
       {
         "assets": [
           {
-            "path": "apps/ha-plus-matter-hub/package.tgz",
-            "label": "Standalone package"
+            "path": "ha_plus_matter_hub.zip",
+            "label": "Marketplace integration"
           },
-          { "path": "CHANGELOG.md", "label": "Release Changelog" },
-          { "path": "CHANGELOG_FULL.md", "label": "Full Changelog" }
+          {
+            "path": "CHANGELOG.md",
+            "label": "Release Changelog"
+          },
+          {
+            "path": "CHANGELOG_FULL.md",
+            "label": "Full Changelog"
+          }
         ]
       }
     ],
     [
       "@semantic-release/exec",
       {
-        "prepareCmd": "APP_VERSION=${nextRelease.version} pnpm run release:version ${nextRelease.version} && APP_VERSION=${nextRelease.version} pnpm run release:pack"
+        "prepareCmd": "APP_VERSION=${nextRelease.version} pnpm run release:version ${nextRelease.version} && APP_VERSION=${nextRelease.version} pnpm run release:pack && python3 scripts/package-marketplace.py --version ${nextRelease.version} && python3 -m pytest"
       }
     ],
     [
