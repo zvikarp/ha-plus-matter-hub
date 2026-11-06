@@ -98,5 +98,11 @@ python3.14 -m venv .venv
 ```
 
 Updating the integration replaces its code and bundled engine; it preserves
-storage under `.storage/ha_plus_matter_hub`. Reload the integration after code
-changes. The normal release workflow publishes the versioned Marketplace ZIP.
+storage under `.storage/ha_plus_matter_hub`. Restart Home Assistant after Python
+or dependency changes. Reloading the integration restarts the managed engine but
+does not reload Python modules; refresh the browser after frontend changes.
+
+For Marketplace-managed beta testing, publish a pre-release from the `beta`
+branch with the **Release** workflow and enable the repository's **Pre-release**
+switch in Marketplace. The normal `main` release publishes the stable integration
+ZIP. The branch test-package workflow above does not publish a release.
