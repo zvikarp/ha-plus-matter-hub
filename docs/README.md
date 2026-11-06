@@ -2,7 +2,7 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./assets/hamh-logo-small-dark.png">
-  <img src="./assets/hamh-logo-small.png" alt="HA Plus Matter Hub" width="140">
+  <img src="./assets/hamh-logo-small.png" alt="HA+ Matter Hub" width="140">
 </picture>
 
 ---

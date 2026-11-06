@@ -1,8 +1,8 @@
-# HA Plus Matter Hub
+# HA+ Matter Hub
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="./docs/assets/hamh-logo-small-dark.png">
-  <img src="./docs/assets/hamh-logo-small.png" alt="HA Plus Matter Hub" width="140">
+  <img src="./docs/assets/hamh-logo-small.png" alt="HA+ Matter Hub" width="140">
 </picture>
 
 ---

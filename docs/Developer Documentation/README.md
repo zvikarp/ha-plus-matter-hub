@@ -2,12 +2,12 @@
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="../assets/hamh-logo-small-dark.png">
-  <img src="../assets/hamh-logo-small.png" alt="HA Plus Matter Hub" width="140">
+  <img src="../assets/hamh-logo-small.png" alt="HA+ Matter Hub" width="140">
 </picture>
 
 ## Overview
 
-Home Assistant Matter Hub (HAMH) is an addon for Home Assistant that acts as a Matter bridge, exposing Home Assistant devices to Matter controllers (Alexa, Apple Home, Google Home) via local communication. No cloud or custom skills are required.
+HA+ Matter Hub (HAMH) is an addon for Home Assistant that acts as a Matter bridge, exposing Home Assistant devices to Matter controllers (Alexa, Apple Home, Google Home) via local communication. No cloud or custom skills are required.
 
 This documentation is intended for developers taking over or contributing to the project. It covers architecture, technologies, and key concepts, especially those related to the Matter protocol and bridging logic.
 

@@ -19,7 +19,7 @@ export class AppErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error("Matter Hub Plus could not render", error, info);
+    console.error("HA+ Matter Hub could not render", error, info);
   }
 
   render() {
@@ -27,7 +27,7 @@ export class AppErrorBoundary extends Component<Props, State> {
       return (
         <PageMessage
           kind="error"
-          title="Matter Hub Plus could not load"
+          title="HA+ Matter Hub could not load"
           message="Reload the page. If the problem continues, check the add-on logs."
           action={
             <Button

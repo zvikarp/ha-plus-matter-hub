@@ -28,7 +28,7 @@ export const BridgesPage = () => {
         kind="error"
         title="Could not load bridges"
         message={
-          error.message ?? "Matter Hub Plus could not reach the bridge service."
+          error.message ?? "HA+ Matter Hub could not reach the bridge service."
         }
         action={<RetryButton onClick={() => void dispatch(loadBridges())} />}
       />

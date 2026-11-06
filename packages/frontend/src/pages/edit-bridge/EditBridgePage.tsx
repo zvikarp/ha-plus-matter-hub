@@ -75,7 +75,7 @@ export const EditBridgePage = () => {
     return (
       <PageMessage
         title="Bridge not found"
-        message="It may have been removed from Matter Hub Plus."
+        message="It may have been removed from HA+ Matter Hub."
       />
     );
   }

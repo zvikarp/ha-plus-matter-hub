@@ -68,7 +68,7 @@ export class Options {
         vendorName: "t0bst4r",
         productId: 0x8000,
         productName: "MatterHub",
-        productLabel: "Home Assistant Matter Hub",
+        productLabel: "HA+ Matter Hub",
         hardwareVersion: new Date().getFullYear(),
         softwareVersion: new Date().getFullYear(),
       },
