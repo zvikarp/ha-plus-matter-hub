@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVert from "@mui/icons-material/MoreVert";
@@ -100,7 +101,7 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
       <IconButton
         onClick={handleOpen}
         aria-label={`More actions for ${bridgeName}`}
-        sx={{ flexShrink: 0, width: 44, height: 44 }}
+        sx={muiStyles.iconAction}
       >
         <MoreVert />
       </IconButton>
@@ -134,7 +135,7 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
           {action === "delete" ? "Delete bridge?" : "Factory reset bridge?"}
         </DialogTitle>
         <DialogContent>
-          <DialogContentText sx={{ overflowWrap: "anywhere" }}>
+          <DialogContentText sx={muiStyles.wrapText}>
             {action === "delete"
               ? `This permanently deletes “${bridgeName}” and its configuration. Paired controllers will no longer be able to use its devices.`
               : `This removes every controller paired with “${bridgeName}”. The bridge configuration stays, but you will need to pair each controller again.`}

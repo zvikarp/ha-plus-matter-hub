@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import { Add } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -56,7 +57,7 @@ export const BridgesPage = () => {
 
   return (
     <Stack spacing={4}>
-      <Box display="flex" justifyContent="end" paddingTop={{ xs: 1, sm: 0 }}>
+      <Box sx={muiStyles.pageActions}>
         <Button
           component={Link}
           to={navigation.createBridge}

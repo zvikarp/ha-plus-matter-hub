@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
 import { type PropsWithChildren, useCallback, useState } from "react";
@@ -42,7 +43,7 @@ export const NotificationsProvider = (props: PropsWithChildren) => {
           <Alert
             severity={notification.severity}
             variant="filled"
-            sx={{ minWidth: "300px" }}
+            sx={muiStyles.notification}
           >
             {notification.message}
           </Alert>

@@ -1,3 +1,4 @@
+import { inlineStyles, muiStyles } from "@ha-plus/ui/mui";
 import type { BridgeFabric } from "@ha-plus-matter-hub/common";
 import QuestionMark from "@mui/icons-material/QuestionMark";
 import Box from "@mui/material/Box";
@@ -45,17 +46,9 @@ export const FabricIcon = ({ fabric }: FabricIconProps) => {
       title={`${fabric.label} (0x${fabric.rootVendorId.toString(16)})`}
       arrow
     >
-      <Box
-        component="span"
-        sx={{ fill: (theme) => theme.palette.text.primary }}
-      >
+      <Box component="span" sx={muiStyles.themedIcon}>
         {BrandIcon ? (
-          <BrandIcon
-            style={{
-              maxHeight: "1em",
-              maxWidth: "3em",
-            }}
-          />
+          <BrandIcon style={inlineStyles.brandIcon} />
         ) : (
           <QuestionMark />
         )}

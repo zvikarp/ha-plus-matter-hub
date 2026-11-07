@@ -36,3 +36,8 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .venv/
+
+# Shared UI notices copied into the standalone frontend at build time
+packages/frontend/public/ha-plus-ui.LICENSE
+packages/frontend/public/ha-plus-ui.LICENSE-APACHE-2.0
+packages/frontend/public/ha-plus-ui.NOTICE

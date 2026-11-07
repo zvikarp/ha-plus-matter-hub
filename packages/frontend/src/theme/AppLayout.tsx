@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
 import Toolbar from "@mui/material/Toolbar";
@@ -15,7 +16,7 @@ export const AppLayout: FC<{ embedded?: boolean }> = ({ embedded = false }) => {
           <Toolbar />
         </>
       )}
-      <Container sx={{ p: 2 }}>
+      <Container sx={muiStyles.padded}>
         <Outlet />
       </Container>
       <AppFooter />

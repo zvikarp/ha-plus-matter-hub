@@ -1,3 +1,4 @@
+import { inlineStyles, muiStyles } from "@ha-plus/ui/mui";
 import type { BridgeDataWithMetadata } from "@ha-plus-matter-hub/common";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -18,20 +19,20 @@ export interface BridgeDetailsProps {
 
 export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
   return (
-    <Paper sx={{ padding: 2 }}>
+    <Paper sx={muiStyles.padded}>
       <Stack spacing={2}>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: "auto" }}>
             <Pairing bridge={bridge} />
           </Grid>
-          <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
+          <Grid size={{ xs: 12, md: "grow" }} sx={muiStyles.shrinkable}>
             <BasicInfo bridge={bridge} />
           </Grid>
-          <Grid size={{ xs: 12, md: "grow" }} sx={{ minWidth: 0 }}>
+          <Grid size={{ xs: 12, md: "grow" }} sx={muiStyles.shrinkable}>
             <CommissioningInfo bridge={bridge} />
           </Grid>
         </Grid>
-        <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
+        <Stack direction="row" spacing={1} useFlexGap sx={muiStyles.wrap}>
           {bridge.filter.include.map((filter, idx) => (
             <Chip
               key={idx.toString()}
@@ -43,15 +44,7 @@ export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
                 </span>
               }
               color="success"
-              sx={{
-                maxWidth: "100%",
-                height: "auto",
-                "& .MuiChip-label": {
-                  whiteSpace: "normal",
-                  overflowWrap: "anywhere",
-                  py: 0.5,
-                },
-              }}
+              sx={muiStyles.wrappingChip}
             />
           ))}
           {bridge.filter.exclude.map((filter, idx) => (
@@ -65,15 +58,7 @@ export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
                 </span>
               }
               color="error"
-              sx={{
-                maxWidth: "100%",
-                height: "auto",
-                "& .MuiChip-label": {
-                  whiteSpace: "normal",
-                  overflowWrap: "anywhere",
-                  py: 0.5,
-                },
-              }}
+              sx={muiStyles.wrappingChip}
             />
           ))}
         </Stack>
@@ -87,25 +72,15 @@ const Pairing = (props: { bridge: BridgeDataWithMetadata }) => {
     return "";
   }
   return (
-    <Box display="flex" justifyContent="center">
-      <Box position="relative" maxWidth="160px">
+    <Box sx={muiStyles.centeredHorizontal}>
+      <Box sx={muiStyles.qrContainer}>
         {props.bridge.commissioning.isCommissioned && (
-          <Box
-            position="absolute"
-            top="50%"
-            left="50%"
-            sx={{ transform: "translate(-50%, -50%) rotate(-45deg)" }}
-          >
+          <Box sx={[muiStyles.diagonalBadge, muiStyles.absoluteCenter]}>
             <Alert color="success" variant="filled">
               <Typography
                 variant="body2"
                 component="a"
-                sx={{
-                  textDecoration: "underline",
-                  textDecorationStyle: "dashed",
-                  cursor: "help",
-                  color: "inherit",
-                }}
+                sx={muiStyles.helpLink}
                 href={navigation.faq.multiFabric}
                 target="_blank"
               >
@@ -114,16 +89,10 @@ const Pairing = (props: { bridge: BridgeDataWithMetadata }) => {
             </Alert>
           </Box>
         )}
-        <Box
-          style={{
-            background: "white",
-            padding: "9px",
-            paddingBottom: "2.6px",
-          }}
-        >
+        <Box style={inlineStyles.qrSurface}>
           <QRCodeSVG
             value={props.bridge.commissioning.qrPairingCode}
-            style={{ width: "100%", height: "100%" }}
+            style={inlineStyles.fill}
           />
         </Box>
       </Box>
@@ -133,17 +102,13 @@ const Pairing = (props: { bridge: BridgeDataWithMetadata }) => {
 
 const BasicInfo = (props: { bridge: BridgeDataWithMetadata }) => {
   return (
-    <Typography
-      variant="subtitle2"
-      component="div"
-      sx={{ overflowWrap: "anywhere" }}
-    >
+    <Typography variant="subtitle2" component="div" sx={muiStyles.wrapText}>
       <div>ID: {props.bridge.id}</div>
       <div>Name: {props.bridge.name}</div>
       <div>Port: {props.bridge.port}</div>
       <div>
         <div>Fabrics:</div>
-        <div style={{ fontSize: "1.5em" }}>
+        <div style={inlineStyles.enlargedText}>
           {props.bridge.commissioning?.fabrics && (
             <FabricList fabrics={props.bridge.commissioning.fabrics} />
           )}
@@ -158,11 +123,7 @@ const CommissioningInfo = (props: { bridge: BridgeDataWithMetadata }) => {
     return "";
   }
   return (
-    <Typography
-      variant="subtitle2"
-      component="div"
-      sx={{ overflowWrap: "anywhere" }}
-    >
+    <Typography variant="subtitle2" component="div" sx={muiStyles.wrapText}>
       <div>Passcode: {props.bridge.commissioning.passcode}</div>
       <div>Discriminator: {props.bridge.commissioning.discriminator}</div>
       <div>

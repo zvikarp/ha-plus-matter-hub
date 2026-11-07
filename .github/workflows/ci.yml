@@ -24,6 +24,7 @@ jobs:
       - run: python -m ruff check custom_components scripts tests
       - run: python -m pytest
       - run: pnpm install --frozen-lockfile
+      - run: pnpm run check:panel
       - run: pnpm run lint
       - run: pnpm run test
       - name: Resolve engine version

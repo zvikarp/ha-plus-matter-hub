@@ -1,0 +1,15 @@
+HA+ UI incorporates code adapted from the following projects.
+
+HA+ Lists and HA+ IR Mapper
+https://github.com/zvikarp/ha-plus-lists
+https://github.com/zvikarp/ha-plus-ir-mapper
+MIT license. Copyright notices are retained in LICENSE.
+
+HA+ Matter Hub
+https://github.com/zvikarp/ha-plus-matter-hub
+Derived from Home Assistant Matter Hub
+https://github.com/t0bst4r/home-assistant-matter-hub
+Apache License 2.0. See LICENSE-APACHE-2.0.
+
+The theme bridge, MUI adapter, MUI presentation definitions and iframe panel
+styles were extracted, reformatted and adapted for reuse across HA+ apps.

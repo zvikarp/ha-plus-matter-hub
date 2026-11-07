@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import { ClusterId, type EndpointData } from "@ha-plus-matter-hub/common";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Accordion from "@mui/material/Accordion";
@@ -44,7 +45,7 @@ export const EndpointState = (props: EndpointStateProps) => {
 
   return (
     <>
-      <Paper sx={{ p: 2, mb: 2 }} variant="outlined">
+      <Paper sx={muiStyles.sectionPaper} variant="outlined">
         <Stack spacing={2}>
           <Typography component="span">About this endpoint</Typography>
           <ObjectTable value={metadata} hideHead></ObjectTable>
@@ -57,7 +58,7 @@ export const EndpointState = (props: EndpointStateProps) => {
             expandIcon={<ExpandMoreIcon />}
             aria-controls="panel1-content"
           >
-            <Typography component="span" sx={{ overflowWrap: "anywhere" }}>
+            <Typography component="span" sx={muiStyles.wrapText}>
               Behavior: <strong>{behavior}</strong>
             </Typography>
           </AccordionSummary>
@@ -80,10 +81,7 @@ const ObjectTable = <T extends object>(props: {
   );
   return (
     <TableContainer>
-      <Table
-        size="small"
-        sx={{ tableLayout: "fixed", "& td": { overflowWrap: "anywhere" } }}
-      >
+      <Table size="small" sx={muiStyles.wrappingTable}>
         {!props.hideHead && (
           <TableHead>
             <TableRow>
@@ -119,9 +117,5 @@ const RenderProperty = (props: { property: unknown }) => {
       return JSON.stringify(props.property);
     }
   }, [props.property]);
-  return (
-    <Typography fontFamily="monospace" fontSize="0.9em">
-      {value}
-    </Typography>
-  );
+  return <Typography sx={muiStyles.codeText}>{value}</Typography>;
 };

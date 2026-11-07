@@ -6,7 +6,12 @@
     "useIgnoreFile": true
   },
   "files": {
-    "includes": ["**/*", "!CHANGELOG.md", "!**/package.json"]
+    "includes": [
+      "**/*",
+      "!CHANGELOG.md",
+      "!**/package.json",
+      "!custom_components/ha_plus_matter_hub/frontend/panel.js"
+    ]
   },
   "formatter": {
     "enabled": true,
