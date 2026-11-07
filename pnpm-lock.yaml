@@ -754,7 +754,7 @@ packages:
     resolution: {integrity: sha512-ZTkyHiPk74B/aj8BZWbsxD5Yu+Lq+nR64eV4wirlrac2qXR7jYk2h6JlLYuOuoruTkGQWNw2fMuKNavw7/rg0w==}
 
   '@ha-plus/ui@https://github.com/zvikarp/ha-plus-packages/releases/download/ui-v0.3.0/ha-plus-ui-0.3.0.tgz':
-    resolution: {tarball: https://github.com/zvikarp/ha-plus-packages/releases/download/ui-v0.3.0/ha-plus-ui-0.3.0.tgz}
+    resolution: {integrity: sha512-uPR9urI+X1UhbeiBuHi0glJr2ChkzFnBHu63RLS1Eu7m76psWANzdpaTP1TRIVyFRhPoLBKWGTh+S1EpAaiC5w==, tarball: https://github.com/zvikarp/ha-plus-packages/releases/download/ui-v0.3.0/ha-plus-ui-0.3.0.tgz}
     version: 0.3.0
     hasBin: true
     peerDependencies:
