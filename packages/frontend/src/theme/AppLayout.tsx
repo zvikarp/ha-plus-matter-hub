@@ -6,11 +6,15 @@ import { Outlet } from "react-router";
 import { AppFooter } from "./AppFooter.tsx";
 import { AppTopBar } from "./AppTopBar.tsx";
 
-export const AppLayout: FC = () => {
+export const AppLayout: FC<{ embedded?: boolean }> = ({ embedded = false }) => {
   return (
     <Box>
-      <AppTopBar />
-      <Toolbar />
+      {!embedded && (
+        <>
+          <AppTopBar />
+          <Toolbar />
+        </>
+      )}
       <Container sx={{ p: 2 }}>
         <Outlet />
       </Container>

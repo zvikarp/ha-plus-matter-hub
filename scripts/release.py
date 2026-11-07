@@ -80,8 +80,15 @@ def prepare(root, bump, releases):
             "major": (major + 1, 0, 0),
         }[bump]
     version = ".".join(map(str, next_version))
-    manifest["version"] = version
-    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n")
+    # Keep the manifest's existing formatting when updating its version.
+    manifest_path.write_text(
+        re.sub(
+            r'("version"\s*:\s*")[^"]+(")',
+            lambda match: f"{match[1]}{version}{match[2]}",
+            manifest_path.read_text(),
+            count=1,
+        )
+    )
     write_engine_versions(root, version)
     return version
 

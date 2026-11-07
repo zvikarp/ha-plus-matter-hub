@@ -35,7 +35,7 @@ const router = (marketplace ? createHashRouter : createBrowserRouter)(
   [
     {
       path: "/",
-      element: <AppLayout />,
+      element: <AppLayout embedded={marketplace} />,
       errorElement: <AppErrorPage />,
       children: routes,
     },
