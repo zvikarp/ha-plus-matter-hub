@@ -1,13 +1,22 @@
 {
   "domain": "ha_plus_matter_hub",
   "name": "HA+ Matter Hub",
-  "version": "1.2.0",
-  "codeowners": ["@zvikarp"],
+  "version": "1.2.1",
+  "codeowners": [
+    "@zvikarp"
+  ],
   "config_flow": true,
-  "dependencies": ["frontend", "http", "panel_custom", "websocket_api"],
+  "dependencies": [
+    "frontend",
+    "http",
+    "panel_custom",
+    "websocket_api"
+  ],
   "documentation": "https://github.com/zvikarp/ha-plus-matter-hub",
   "issue_tracker": "https://github.com/zvikarp/ha-plus-matter-hub/issues",
   "integration_type": "service",
   "iot_class": "local_push",
-  "requirements": ["nodejs-wheel-binaries==24.19.0"]
+  "requirements": [
+    "nodejs-wheel-binaries==24.19.0"
+  ]
 }
