@@ -7,6 +7,7 @@ from zipfile import ZipFile
 import pytest
 
 ROOT = Path(__file__).resolve().parents[1]
+BRAND_FILES = {"icon.png", "logo.png", "dark_icon.png", "dark_logo.png"}
 
 
 def test_marketplace_manifest_and_locked_engine_dependencies():
@@ -20,6 +21,12 @@ def test_marketplace_manifest_and_locked_engine_dependencies():
     app = json.loads((ROOT / "apps/ha-plus-matter-hub/package.json").read_text())
     locked = json.loads((ROOT / "marketplace/package-lock.json").read_text())
     assert locked["packages"][""]["dependencies"] == app["dependencies"]
+
+
+def test_native_brand_assets_exist():
+    brand = ROOT / "custom_components/ha_plus_matter_hub/brand"
+    for name in BRAND_FILES:
+        assert (brand / name).read_bytes().startswith(b"\x89PNG\r\n\x1a\n")
 
 
 def test_built_release_contains_all_runtime_files():
@@ -42,6 +49,8 @@ def test_built_release_contains_all_runtime_files():
             "__pycache__" in name or name.startswith("custom_components/")
             for name in names
         )
+        for name in BRAND_FILES:
+            assert archive.read(f"brand/{name}").startswith(b"\x89PNG\r\n\x1a\n")
         manifest = json.loads(archive.read("manifest.json"))
         runtime = json.loads(archive.read("runtime/package.json"))
         runtime_lock = json.loads(archive.read("runtime/package-lock.json"))
