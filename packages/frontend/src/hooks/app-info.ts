@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import packageJson from "../../../../apps/ha-plus-matter-hub/package.json";
 
 export interface AppInfo {
   name: string;
@@ -8,7 +7,7 @@ export interface AppInfo {
 
 export function useAppInfo(): AppInfo {
   return useMemo(
-    () => ({ name: packageJson.name, version: __APP_VERSION__ }),
+    () => ({ name: "HA+ Matter Hub", version: __APP_VERSION__ }),
     [],
   );
 }

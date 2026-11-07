@@ -1,8 +1,9 @@
 import { path } from "./icon.js";
 
-window.customIconsets = window.customIconsets || {};
-window.customIconsets["matter-hub-plus"] = {
-  getIcon: async () => ({ path, viewBox: "0 0 513 512" }),
+window.customIcons = window.customIcons || {};
+window.customIcons["matter-hub-plus"] = {
+  getIcon: async (name) =>
+    name === "logo" ? { path, viewBox: "0 0 513 512" } : undefined,
 };
 
 class MatterHubPanel extends HTMLElement {
@@ -17,7 +18,43 @@ class MatterHubPanel extends HTMLElement {
   connectedCallback() {
     if (!this.shadowRoot) {
       const root = this.attachShadow({ mode: "open" });
-      root.innerHTML = `<style>:host{display:flex;flex-direction:column;height:100%;}header{display:flex;align-items:center;flex-shrink:0;height:var(--header-height,56px);background:var(--app-header-background-color);color:var(--app-header-text-color);}iframe{border:0;width:100%;flex:1;min-height:0;}</style><header><ha-menu-button></ha-menu-button><span>HA+ Matter Hub</span></header><iframe title="HA+ Matter Hub" src="/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1"></iframe>`;
+      root.innerHTML = `
+        <style>
+          :host {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-rows: var(--header-height, 56px) minmax(0, 1fr);
+            min-width: 0;
+            min-height: 0;
+          }
+          header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+            font: 500 20px var(--primary-font-family, Roboto, sans-serif);
+            background: var(--app-header-background-color);
+            color: var(--app-header-text-color);
+          }
+          .brand { display: flex; align-items: center; gap: 12px; min-width: 0; color: inherit; text-decoration: none; }
+          header img { width: 32px; height: 32px; flex-shrink: 0; }
+          header span { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+          .version { font-size: 12px; font-weight: 400; opacity: .7; margin-right: 16px; }
+          iframe { display: block; border: 0; width: 100%; height: 100%; min-height: 0; }
+          @media (max-width: 400px) { header { gap: 8px; font-size: 18px; } }
+        </style>
+        <header>
+          <ha-menu-button></ha-menu-button>
+          <a class="brand" href="/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1" target="ha-plus-matter-hub-ui">
+            <img src="/ha_plus_matter_hub/logo.png" alt="" />
+            <span>HA+ Matter Hub</span>
+          </a>
+          <span class="version"></span>
+        </header>
+        <iframe name="ha-plus-matter-hub-ui" title="HA+ Matter Hub" src="/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1"></iframe>`;
+      root.querySelector(".version").textContent =
+        new URL(import.meta.url).searchParams.get("v") || "";
       this.menu = root.querySelector("ha-menu-button");
       this.menu.hass = this._hass;
       this.menu.narrow = this._narrow;

@@ -64,6 +64,11 @@ async def async_register_frontend(hass, runtime):
                     cache_headers=False,
                 ),
                 StaticPathConfig(
+                    f"{ROOT}/logo.png",
+                    str(root / "brand/icon.png"),
+                    cache_headers=False,
+                ),
+                StaticPathConfig(
                     f"{ROOT}/ui",
                     str(runtime.root / "dist/frontend"),
                     cache_headers=False,

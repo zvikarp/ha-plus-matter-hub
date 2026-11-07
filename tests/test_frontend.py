@@ -1,6 +1,8 @@
 """Check that Home Assistant authorization owns every management request."""
 
 import asyncio
+import subprocess
+from pathlib import Path
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
 
@@ -55,3 +57,35 @@ async def test_admin_request_is_relayed_without_exposing_credentials():
     await asyncio.gather(*tasks)
     engine.async_request.assert_awaited_once_with("GET", "api/matter/bridges", None)
     connection.send_result.assert_called_once_with(1, {"status": 200, "body": "[]"})
+
+
+def test_sidebar_registers_the_mono_icon_with_home_assistant():
+    panel = (
+        Path(__file__).resolve().parents[1]
+        / "custom_components/ha_plus_matter_hub/frontend/panel.js"
+    )
+    result = subprocess.run(
+        [
+            "node",
+            "--input-type=module",
+            "-e",
+            """
+            import assert from 'node:assert/strict';
+            import { pathToFileURL } from 'node:url';
+            globalThis.window = {};
+            globalThis.HTMLElement = class {};
+            const elements = new Map();
+            globalThis.customElements = {get: name => elements.get(name), define: (name, value) => elements.set(name, value)};
+            await import(pathToFileURL(process.argv[1]).href);
+            const icon = await window.customIcons['matter-hub-plus'].getIcon('logo');
+            assert.equal(icon.viewBox, '0 0 513 512');
+            assert.match(icon.path, /^M/);
+            assert.equal(await window.customIcons['matter-hub-plus'].getIcon('missing'), undefined);
+            assert.ok(elements.has('ha-plus-matter-hub-panel'));
+        """,
+            str(panel),
+        ],
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr

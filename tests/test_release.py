@@ -103,3 +103,10 @@ def test_release_tag_guard_precedes_packaging(project):
         run.assert_not_called()
         package(project, "v1.2.0")
         assert run.call_args.args[0][-2:] == ["--version", "1.2.0"]
+
+
+def test_version_bump_preserves_manifest_formatting(project):
+    manifest = project / "custom_components/ha_plus_matter_hub/manifest.json"
+    original = manifest.read_text()
+    prepare(project, "patch", [{"tagName": "v1.2.0"}])
+    assert manifest.read_text() == original.replace('"1.2.0"', '"1.2.1"')
