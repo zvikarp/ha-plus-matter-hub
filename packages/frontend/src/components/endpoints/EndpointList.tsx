@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import type { EndpointData } from "@ha-plus-matter-hub/common";
 import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
@@ -94,21 +95,20 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
               },
             }}
           />
-          <Paper variant="outlined" sx={{ maxHeight: 560, overflow: "auto" }}>
+          <Paper variant="outlined" sx={muiStyles.scrollableList}>
             {groupedDevices.length === 0 ? (
-              <Typography
-                color="text.secondary"
-                sx={{ p: 3, textAlign: "center" }}
-              >
+              <Typography color="text.secondary" sx={muiStyles.emptyList}>
                 No devices match “{query}”.
               </Typography>
             ) : (
               <List disablePadding aria-label="Exposed devices">
                 {groupedDevices.map(([type, items]) => (
-                  <Box component="li" key={type} sx={{ listStyle: "none" }}>
-                    <ListSubheader
-                      sx={{ overflowWrap: "anywhere", lineHeight: 1.5, py: 1 }}
-                    >
+                  <Box
+                    component="li"
+                    key={type}
+                    sx={muiStyles.unstyledListItem}
+                  >
+                    <ListSubheader sx={muiStyles.listSubheading}>
                       {type}
                     </ListSubheader>
                     {items.map((device) => (
@@ -123,7 +123,7 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
                         <ListItemText
                           primary={getEndpointName(device)}
                           secondary={`Endpoint ${device.endpoint}`}
-                          sx={{ overflowWrap: "anywhere" }}
+                          sx={muiStyles.wrapText}
                         />
                       </ListItemButton>
                     ))}
@@ -135,7 +135,7 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
         </Stack>
       </Grid>
       <Grid size={{ xs: 12, md: 7 }}>
-        <Typography variant="h6" sx={{ mb: 2 }}>
+        <Typography variant="h6" sx={muiStyles.sectionHeading}>
           Device details
         </Typography>
         {selectedItem ? (

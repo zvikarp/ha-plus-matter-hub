@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -82,13 +83,8 @@ export const BridgeDetailsPage = () => {
         ]}
       />
 
-      <Box
-        display="flex"
-        justifyContent="space-between"
-        alignItems="flex-start"
-        gap={1}
-      >
-        <Typography variant="h4" sx={{ minWidth: 0, overflowWrap: "anywhere" }}>
+      <Box sx={muiStyles.titleRow}>
+        <Typography variant="h4" sx={muiStyles.wrappingHeading}>
           {bridge.name} <BridgeStatusIcon status={bridge.status} />
         </Typography>
         <BridgeMoreMenu bridge={bridgeId} bridgeName={bridge.name} />
@@ -99,13 +95,7 @@ export const BridgeDetailsPage = () => {
       <MemoizedBridgeDetails bridge={bridge} />
 
       <Stack spacing={2}>
-        <Box
-          display="flex"
-          justifyContent="flex-end"
-          alignItems="center"
-          gap={1}
-          flexWrap="wrap"
-        >
+        <Box sx={muiStyles.wrappedActions}>
           {timer != null && (
             <Tooltip title="Device state refreshes automatically.">
               <Typography variant="body2" color="textSecondary">

@@ -1,3 +1,4 @@
+import { globalStyles } from "@ha-plus/ui/mui";
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StateProvider } from "react-redux";
@@ -54,16 +55,7 @@ const ThemedApp = () => {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <GlobalStyles
-        styles={{
-          // @rsjf/mui has a bug which breaks nested item rendering (see https://github.com/rjsf-team/react-jsonschema-form/issues/4838)
-          ".rjsf-field-array > .MuiFormControl-root > .MuiPaper-root > .MuiBox-root > .MuiGrid-root > .MuiGrid-root:has(> .MuiBox-root > .MuiPaper-root > .MuiBox-root > .rjsf-field)":
-            {
-              overflow: "initial !important",
-              flexGrow: 1,
-            },
-        }}
-      />
+      <GlobalStyles styles={globalStyles} />
       <AppErrorBoundary>
         <NotificationsProvider>
           <RouterProvider router={router} />

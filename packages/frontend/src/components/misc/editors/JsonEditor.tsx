@@ -1,5 +1,6 @@
 import { json, jsonLanguage, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
+import { editorHeight, muiStyles } from "@ha-plus/ui/mui";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -86,7 +87,7 @@ export const JsonEditor = (props: JsonEditorProps) => {
 
   return (
     <Stack spacing={2}>
-      <Box position="relative" sx={{ minWidth: 0, maxWidth: "100%" }}>
+      <Box sx={[muiStyles.editor, muiStyles.relative]}>
         <ReactCodeMirror
           value={stringValue}
           onChange={(value) => valueChanged(value)}
@@ -106,16 +107,9 @@ export const JsonEditor = (props: JsonEditorProps) => {
             stateExtensions(props.schema),
           ]}
           theme={codeMirrorTheme}
-          height="400px"
+          height={editorHeight}
         />
-        <Button
-          sx={{
-            position: "absolute",
-            right: "0",
-            bottom: "0",
-          }}
-          onClick={() => prettify()}
-        >
+        <Button sx={muiStyles.editorAction} onClick={() => prettify()}>
           Prettify
         </Button>
       </Box>

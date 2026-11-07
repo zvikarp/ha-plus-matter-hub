@@ -102,3 +102,16 @@ pnpm serve
 For more detailed development information, see the [Developer Documentation](./docs/Developer%20Documentation/README.md).
 
 ---
+
+## Shared UI development
+
+The frontend consumes `@ha-plus/ui/mui` for HA theme overrides and shared
+presentation styles, and `@ha-plus/ui/ha-theme` for iframe theme synchronization.
+Keep presentation definitions in the shared package. React components compose
+its exported styles while retaining application data, layout components and
+behavior. The sidebar wrapper source is `src/panel.js` and uses the shared
+`iframePanelStyles`. Run `pnpm run build:panel` after changing it and commit the
+generated integration file. `pnpm run check:panel` verifies reproducibility.
+
+The versioned package is bundled into the HACS release, including the engine
+frontend. Users do not need a separate shared integration or browser CDN.

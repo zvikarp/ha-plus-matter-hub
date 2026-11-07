@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import InboxIcon from "@mui/icons-material/Inbox";
 import Button from "@mui/material/Button";
@@ -20,12 +21,12 @@ export const PageMessage = ({
   action,
   kind = "empty",
 }: PageMessageProps) => (
-  <Paper variant="outlined" sx={{ p: 4 }}>
-    <Stack spacing={2} alignItems="center" textAlign="center">
+  <Paper variant="outlined" sx={muiStyles.pageState}>
+    <Stack spacing={2} sx={muiStyles.centeredContent}>
       {kind === "error" ? (
-        <ErrorOutlineIcon color="error" sx={{ fontSize: 48 }} />
+        <ErrorOutlineIcon color="error" sx={muiStyles.stateIcon} />
       ) : (
-        <InboxIcon color="disabled" sx={{ fontSize: 48 }} />
+        <InboxIcon color="disabled" sx={muiStyles.stateIcon} />
       )}
       <div>
         <Typography variant="h6">{title}</Typography>
@@ -44,8 +45,8 @@ export const RetryButton = ({ onClick }: { onClick: () => void }) => (
 
 export const PageLoading = ({ label = "Loading" }: { label?: string }) => (
   <Stack spacing={2} aria-busy="true" aria-label={label}>
-    <Skeleton variant="rounded" height={88} />
-    <Skeleton variant="rounded" height={88} />
-    <Skeleton variant="rounded" height={88} />
+    <Skeleton variant="rounded" sx={muiStyles.loadingRow} />
+    <Skeleton variant="rounded" sx={muiStyles.loadingRow} />
+    <Skeleton variant="rounded" sx={muiStyles.loadingRow} />
   </Stack>
 );

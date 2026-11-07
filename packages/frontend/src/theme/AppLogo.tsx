@@ -1,3 +1,4 @@
+import { brandLinkStyles, muiStyles } from "@ha-plus/ui/mui";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { Link } from "react-router";
@@ -12,27 +13,10 @@ export const AppLogo = (props: { large: boolean }) => {
     <Box
       component={Link}
       to={navigation.bridges}
-      sx={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: props.large ? "flex-start" : "center",
-        flexGrow: 1,
-        textDecoration: "none",
-        color: "inherit",
-      }}
+      sx={brandLinkStyles(props.large)}
     >
-      <Box
-        component="img"
-        src={logo}
-        alt=""
-        sx={{
-          height: "40px",
-          width: "40px",
-          flexShrink: 0,
-          objectFit: "contain",
-        }}
-      />
-      <Typography variant="inherit" component="span" sx={{ mr: 1, ml: 1 }}>
+      <Box component="img" src={logo} alt="" sx={muiStyles.brandImage} />
+      <Typography variant="inherit" component="span" sx={muiStyles.brandText}>
         {appInfo.name}
       </Typography>
       {props.large && (

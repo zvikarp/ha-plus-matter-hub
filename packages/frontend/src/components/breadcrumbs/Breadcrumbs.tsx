@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import MuiBreadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router";
@@ -14,7 +15,7 @@ const Breadcrumb = ({ name, to }: BreadcrumbProps) => {
       underline="hover"
       component={RouterLink}
       to={to}
-      sx={{ overflowWrap: "anywhere" }}
+      sx={muiStyles.wrapText}
     >
       {name}
     </Link>
@@ -27,10 +28,7 @@ export interface BreadcrumbsProps {
 
 export const Breadcrumbs = ({ items }: BreadcrumbsProps) => {
   return (
-    <MuiBreadcrumbs
-      separator="›"
-      sx={{ "& li": { minWidth: 0, maxWidth: "100%" } }}
-    >
+    <MuiBreadcrumbs separator="›" sx={muiStyles.breadcrumbs}>
       {items.map((item, index) => (
         <Breadcrumb key={index.toString()} {...item} />
       ))}

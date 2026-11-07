@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import type { BridgeDataWithMetadata } from "@ha-plus-matter-hub/common";
 import QrCode from "@mui/icons-material/QrCode";
 import Box from "@mui/material/Box";
@@ -18,19 +19,12 @@ export const BridgeCard = ({ bridge }: BridgeCardProps) => {
   return (
     <Card variant="elevation">
       <CardActionArea component={RouterLink} to={navigation.bridge(bridge.id)}>
-        <CardContent sx={{ display: "flex" }}>
-          <Box display="flex" alignItems="center">
-            <QrCode sx={{ height: "3em", width: "3em" }} />
+        <CardContent sx={muiStyles.row}>
+          <Box sx={muiStyles.centeredRow}>
+            <QrCode sx={muiStyles.largeIcon} />
           </Box>
-          <Box
-            pl={1}
-            display="flex"
-            flexDirection="column"
-            justifyContent="center"
-            flexGrow={1}
-            minWidth={0}
-          >
-            <Typography sx={{ overflowWrap: "anywhere" }}>
+          <Box sx={muiStyles.growColumn}>
+            <Typography sx={muiStyles.wrapText}>
               {bridge.name} <BridgeStatusIcon status={bridge.status} />
             </Typography>
             <Grid container>

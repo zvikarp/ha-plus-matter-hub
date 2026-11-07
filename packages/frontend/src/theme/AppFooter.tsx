@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
@@ -18,9 +19,9 @@ const links: { name: string; url: string }[] = [
 
 export const AppFooter = () => {
   return (
-    <Container sx={{ mt: 16, mb: 4 }}>
-      <Divider sx={{ mt: 4, mb: 4 }} />
-      <Grid container spacing={2} justifyContent="center">
+    <Container sx={muiStyles.footer}>
+      <Divider sx={muiStyles.dividerSpacing} />
+      <Grid container spacing={2} sx={muiStyles.centered}>
         {links.map((link, idx) => (
           <Grid size={{ xs: 12, sm: "auto" }} key={idx.toString()}>
             <Button

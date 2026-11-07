@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import type { EndpointData } from "@ha-plus-matter-hub/common";
 import Box from "@mui/material/Box";
 import { SimpleTreeView } from "@mui/x-tree-view/SimpleTreeView";
@@ -57,15 +58,9 @@ const EndpointTreeItem = (props: EndpointTreeItemProps) => {
 
 const EndpointTreeItemLabel = (props: EndpointTreeItemProps) => {
   return (
-    <Box display="flex">
+    <Box sx={muiStyles.row}>
       <EndpointIcon endpoint={props.endpoint} />
-      <Box
-        marginLeft={1}
-        component="span"
-        whiteSpace="nowrap"
-        textOverflow="ellipsis"
-        overflow="hidden"
-      >
+      <Box component="span" sx={muiStyles.ellipsis}>
         <EndpointName endpoint={props.endpoint} />
       </Box>
     </Box>

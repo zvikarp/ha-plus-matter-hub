@@ -1,3 +1,4 @@
+import { muiStyles } from "@ha-plus/ui/mui";
 import {
   type BridgeConfig,
   bridgeConfigSchema,
@@ -89,7 +90,7 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
       </Alert>
 
       <Stack spacing={2}>
-        <Box display="flex" justifyContent={"flex-end"}>
+        <Box sx={muiStyles.endRow}>
           <Button
             onClick={() => toggleEditor()}
             title={
@@ -102,7 +103,7 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
                 ? "JSON editor"
                 : "Form editor"
             }
-            sx={{ minHeight: 44 }}
+            sx={muiStyles.actionTarget}
           >
             {editorMode === BridgeEditorMode.FIELDS_EDITOR ? (
               <TextFields />
@@ -141,10 +142,7 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
               Cancel
             </Button>
           </Grid>
-          <Grid
-            size={{ xs: 0, sm: 4, md: 6 }}
-            sx={{ display: { xs: "none", sm: "block" } }}
-          />
+          <Grid size={{ xs: 0, sm: 4, md: 6 }} sx={muiStyles.desktopOnly} />
           <Grid size={{ xs: 6, sm: 4, md: 3 }}>
             <Button
               fullWidth
