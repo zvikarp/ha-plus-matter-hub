@@ -80,5 +80,5 @@ function el(tag,text,className){const node=document.createElement(tag);if(text!=
   (*! Adapted from HA+ Matter Hub. Licensed under Apache-2.0. See ha-plus-ui.NOTICE and ha-plus-ui.LICENSE-APACHE-2.0 in the distribution. *)
 
 @ha-plus/ui/src/index.js:
-  (*! @ha-plus/ui v0.4.0-rc.1 | MIT | Copyright (c) 2026 HA+ contributors | https://github.com/zvikarp/ha-plus-packages/blob/main/LICENSE *)
+  (*! @ha-plus/ui v0.4.0-rc.3 | MIT | Copyright (c) 2026 HA+ contributors | https://github.com/zvikarp/ha-plus-packages/blob/main/LICENSE *)
 */
