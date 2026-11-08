@@ -1,7 +1,7 @@
 {
   "domain": "ha_plus_matter_hub",
   "name": "HA+ Matter Hub",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "codeowners": ["@zvikarp"],
   "config_flow": true,
   "dependencies": ["frontend", "http", "panel_custom", "websocket_api"],
