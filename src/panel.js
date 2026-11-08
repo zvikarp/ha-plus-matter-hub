@@ -14,6 +14,16 @@ class MatterHubPanel extends HTMLElement {
     this.updateSettings();
     if (this.menu) this.menu.hass = value;
   }
+  set panel(value) {
+    this._panel = value;
+    this.updateFrame();
+  }
+  updateFrame() {
+    if (!this.frame) return;
+    const version = encodeURIComponent(this._panel?.config?.version || "");
+    const src = `/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1&v=${version}`;
+    if (this.frame.getAttribute("src") !== src) this.frame.src = src;
+  }
   set narrow(value) {
     this._narrow = value;
     if (this.menu) this.menu.narrow = value;
@@ -25,6 +35,7 @@ class MatterHubPanel extends HTMLElement {
         <style>${iframePanelStyles}</style>
         <iframe name="ha-plus-matter-hub-ui" title="HA+ Matter Hub" src="/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1"></iframe>`;
       this.frame = root.querySelector("iframe");
+      this.updateFrame();
       this.updateSettings();
     }
     this.listener = (event) => this.handleRequest(event);

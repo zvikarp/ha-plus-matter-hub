@@ -6,8 +6,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -57,7 +57,7 @@ export const EndpointState = (props: EndpointStateProps) => {
   ).homeAssistantEntity?.entity?.entity_id;
   return (
     <>
-      <Paper sx={muiStyles.sectionPaper} variant="outlined">
+      <Box sx={muiStyles.sectionHeading}>
         <Stack spacing={2}>
           <Typography component="span">{t("about_this_endpoint")}</Typography>
           {source && (
@@ -67,7 +67,7 @@ export const EndpointState = (props: EndpointStateProps) => {
           )}
           <ObjectTable value={metadata} hideHead></ObjectTable>
         </Stack>
-      </Paper>
+      </Box>
 
       {behaviors.map((behavior) => (
         <Accordion key={behavior}>

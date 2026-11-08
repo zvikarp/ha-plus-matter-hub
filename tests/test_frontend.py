@@ -82,6 +82,20 @@ def test_sidebar_registers_the_mono_icon_with_home_assistant():
             assert.match(icon.path, /^M/);
             assert.equal(await window.customIcons['matter-hub-plus'].getIcon('missing'), undefined);
             assert.ok(elements.has('ha-plus-matter-hub-panel'));
+            const Panel = elements.get('ha-plus-matter-hub-panel');
+            const panel = new Panel();
+            let src;
+            let updates = 0;
+            panel.frame = {
+                getAttribute: () => src,
+                set src(value) { src = value; updates++; },
+            };
+            panel.panel = {config: {version: '1.2.6'}};
+            assert.equal(src, '/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1&v=1.2.6');
+            panel.panel = {config: {version: '1.2.6'}};
+            assert.equal(updates, 1);
+            panel.panel = {config: {version: '1.2.7'}};
+            assert.equal(updates, 2);
         """,
             str(panel),
         ],

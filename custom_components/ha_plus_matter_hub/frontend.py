@@ -86,7 +86,7 @@ async def async_register_frontend(hass, runtime):
         sidebar_icon="matter-hub-plus:logo",
         module_url=module,
         require_admin=True,
-        config={},
+        config={"version": str(integration.version)},
     )
 
 
