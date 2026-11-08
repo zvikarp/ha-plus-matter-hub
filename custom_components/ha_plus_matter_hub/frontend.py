@@ -1,17 +1,20 @@
-"""Admin-only API relay and a sidebar panel with no client-side credentials."""
+"""Register app-owned frontend assets through the shared HA+ lifecycle."""
 
 import asyncio
 from pathlib import Path
 
 import aiohttp
 import voluptuous as vol
-from homeassistant.components import frontend, websocket_api
-from homeassistant.components.frontend import add_extra_js_url
-from homeassistant.components.http import StaticPathConfig
-from homeassistant.components.panel_custom import async_register_panel
+from homeassistant.components import websocket_api
 from homeassistant.exceptions import HomeAssistantError
 
 from .const import DOMAIN, PANEL, ROOT
+from .ha_plus_frontend import (
+    async_register_frontend as register_frontend,
+)
+from .ha_plus_frontend import (
+    async_unregister_frontend as unregister_frontend,
+)
 
 
 @websocket_api.websocket_command(
@@ -45,50 +48,25 @@ async def request(hass, connection, msg):
 
 
 async def async_register_frontend(hass, runtime):
-    from homeassistant.loader import async_get_integration
-
-    integration = await async_get_integration(hass, DOMAIN)
-    module = f"{ROOT}/panel.js?v={integration.version}"
-    if not hass.data.get(f"{DOMAIN}_frontend"):
-        root = Path(__file__).parent
-        await hass.http.async_register_static_paths(
-            [
-                StaticPathConfig(
-                    f"{ROOT}/panel.js",
-                    str(root / "frontend/panel.js"),
-                    cache_headers=False,
-                ),
-                StaticPathConfig(
-                    f"{ROOT}/icon.js",
-                    str(root / "frontend/icon.js"),
-                    cache_headers=False,
-                ),
-                StaticPathConfig(
-                    f"{ROOT}/logo.png",
-                    str(root / "brand/icon.png"),
-                    cache_headers=False,
-                ),
-                StaticPathConfig(
-                    f"{ROOT}/ui",
-                    str(runtime.root / "dist/frontend"),
-                    cache_headers=False,
-                ),
-            ]
-        )
-        add_extra_js_url(hass, module)
-        websocket_api.async_register_command(hass, request)
-        hass.data[f"{DOMAIN}_frontend"] = True
-    await async_register_panel(
+    root = Path(__file__).parent
+    await register_frontend(
         hass,
+        domain=DOMAIN,
+        module_url="/ha_plus_matter_hub/panel.js",
+        static_paths={
+            "/ha_plus_matter_hub/panel.js": root / "frontend/panel.js",
+            f"{ROOT}/icon.js": root / "frontend/icon.js",
+            f"{ROOT}/logo.png": root / "brand/icon.png",
+            f"{ROOT}/ui": runtime.root / "dist/frontend",
+        },
         webcomponent_name="ha-plus-matter-hub-panel",
         frontend_url_path=PANEL,
         sidebar_title="HA+ Matter Hub",
         sidebar_icon="matter-hub-plus:logo",
-        module_url=module,
         require_admin=True,
-        config={"version": str(integration.version)},
+        commands=(request,),
     )
 
 
 def async_unregister_frontend(hass):
-    frontend.async_remove_panel(hass, PANEL)
+    unregister_frontend(hass, PANEL)
