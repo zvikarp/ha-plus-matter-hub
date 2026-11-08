@@ -1,4 +1,6 @@
+import { haContext, localizeSchema } from "@ha-plus/ui/ha";
 import { muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
 import {
   type BridgeConfig,
   bridgeConfigSchema,
@@ -10,8 +12,9 @@ import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { navigation } from "../../routes.tsx";
+import messages from "../../translations/en.json";
 import { FormEditor } from "../misc/editors/FormEditor";
 import { JsonEditor } from "../misc/editors/JsonEditor";
 import type { ValidationError } from "../misc/editors/validation-error.ts";
@@ -30,6 +33,10 @@ export interface BridgeConfigEditorProps {
 }
 
 export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
+  const t = useLocalizer(messages);
+
+  const schema = localizeSchema(haContext(), bridgeConfigSchema, messages);
+
   const [editorMode, setEditorMode] = useState<BridgeEditorMode>(
     BridgeEditorMode.FIELDS_EDITOR,
   );
@@ -43,6 +50,8 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
 
   const [config, setConfig] = useState<object | undefined>(props.bridge);
   const [isValid, setIsValid] = useState<boolean>(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const saving = useRef(false);
 
   const validatePort = useCallback(
     (value: object | undefined): ValidationError[] => {
@@ -55,13 +64,15 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
         return [
           {
             instancePath: "/port",
-            message: `Port is already used by bridge with id ${usedBy}`,
+            message: t("port_is_already_used_by_bridge_with_id", {
+              value1: usedBy,
+            }),
           },
         ];
       }
       return [];
     },
-    [props.bridgeId, props.usedPorts],
+    [props.bridgeId, props.usedPorts, t],
   );
 
   const onChange = (data: object | undefined, isValid: boolean) => {
@@ -70,22 +81,27 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
   };
 
   const saveAction = async () => {
-    if (!isValid) {
-      return;
+    if (!isValid || saving.current) return;
+    saving.current = true;
+    setIsSaving(true);
+    try {
+      await props.onSave(config as BridgeConfig);
+    } finally {
+      saving.current = false;
+      setIsSaving(false);
     }
-    await props.onSave(config as BridgeConfig);
   };
 
   return (
     <>
       <Alert severity="warning" variant="outlined">
-        Please consult{" "}
+        {t("please_consult")}{" "}
         <Link href={navigation.faq.bridgeConfig} target="_blank">
-          the documentation
+          {t("the_documentation")}
         </Link>{" "}
-        for proper bridge configurations.{" "}
+        {t("for_proper_bridge_configurations")}{" "}
         <strong>
-          Especially if you are using labels, see the "Labels" section.
+          {t("especially_if_you_are_using_labels_see_the_labels_section")}
         </strong>
       </Alert>
 
@@ -93,15 +109,16 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
         <Box sx={muiStyles.endRow}>
           <Button
             onClick={() => toggleEditor()}
+            disabled={isSaving}
             title={
               editorMode === BridgeEditorMode.FIELDS_EDITOR
-                ? "JSON editor"
-                : "Form editor"
+                ? t("json_editor")
+                : t("form_editor")
             }
             aria-label={
               editorMode === BridgeEditorMode.FIELDS_EDITOR
-                ? "JSON editor"
-                : "Form editor"
+                ? t("json_editor")
+                : t("form_editor")
             }
             sx={muiStyles.actionTarget}
           >
@@ -117,7 +134,7 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
           <FormEditor
             value={config ?? {}}
             onChange={onChange}
-            schema={bridgeConfigSchema}
+            schema={schema}
             customValidate={validatePort}
           />
         )}
@@ -126,7 +143,7 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
           <JsonEditor
             value={config ?? {}}
             onChange={onChange}
-            schema={bridgeConfigSchema}
+            schema={schema}
             customValidate={validatePort}
           />
         )}
@@ -138,8 +155,9 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
               variant="outlined"
               color="error"
               onClick={props.onCancel}
+              disabled={isSaving}
             >
-              Cancel
+              {t("common.cancel")}
             </Button>
           </Grid>
           <Grid size={{ xs: 0, sm: 4, md: 6 }} sx={muiStyles.desktopOnly} />
@@ -147,10 +165,11 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
             <Button
               fullWidth
               variant="outlined"
-              disabled={!isValid}
+              disabled={!isValid || isSaving}
+              loading={isSaving}
               onClick={saveAction}
             >
-              Save
+              {t("common.save")}
             </Button>
           </Grid>
         </Grid>

@@ -1,4 +1,5 @@
 import { inlineStyles, muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
 import type { BridgeDataWithMetadata } from "@ha-plus-matter-hub/common";
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
@@ -11,6 +12,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { QRCodeSVG } from "qrcode.react";
 import { navigation } from "../../routes.tsx";
+import messages from "../../translations/en.json";
 import { FabricList } from "../fabric/FabricList.tsx";
 
 export interface BridgeDetailsProps {
@@ -68,6 +70,8 @@ export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
 };
 
 const Pairing = (props: { bridge: BridgeDataWithMetadata }) => {
+  const t = useLocalizer(messages);
+
   if (!props.bridge.commissioning) {
     return "";
   }
@@ -84,7 +88,7 @@ const Pairing = (props: { bridge: BridgeDataWithMetadata }) => {
                 href={navigation.faq.multiFabric}
                 target="_blank"
               >
-                Commissioned
+                {t("commissioned")}
               </Typography>
             </Alert>
           </Box>
@@ -101,13 +105,24 @@ const Pairing = (props: { bridge: BridgeDataWithMetadata }) => {
 };
 
 const BasicInfo = (props: { bridge: BridgeDataWithMetadata }) => {
+  const t = useLocalizer(messages);
+
   return (
     <Typography variant="subtitle2" component="div" sx={muiStyles.wrapText}>
-      <div>ID: {props.bridge.id}</div>
-      <div>Name: {props.bridge.name}</div>
-      <div>Port: {props.bridge.port}</div>
       <div>
-        <div>Fabrics:</div>
+        {t("id")}
+        {props.bridge.id}
+      </div>
+      <div>
+        {t("name")}
+        {props.bridge.name}
+      </div>
+      <div>
+        {t("port")}
+        {props.bridge.port}
+      </div>
+      <div>
+        <div>{t("fabrics")}</div>
         <div style={inlineStyles.enlargedText}>
           {props.bridge.commissioning?.fabrics && (
             <FabricList fabrics={props.bridge.commissioning.fabrics} />
@@ -119,17 +134,29 @@ const BasicInfo = (props: { bridge: BridgeDataWithMetadata }) => {
 };
 
 const CommissioningInfo = (props: { bridge: BridgeDataWithMetadata }) => {
+  const t = useLocalizer(messages);
+
   if (!props.bridge.commissioning) {
     return "";
   }
   return (
     <Typography variant="subtitle2" component="div" sx={muiStyles.wrapText}>
-      <div>Passcode: {props.bridge.commissioning.passcode}</div>
-      <div>Discriminator: {props.bridge.commissioning.discriminator}</div>
       <div>
-        Manual Pairing Code: {props.bridge.commissioning.manualPairingCode}
+        {t("passcode")}
+        {props.bridge.commissioning.passcode}
       </div>
-      <div>QR Pairing Code: {props.bridge.commissioning.qrPairingCode}</div>
+      <div>
+        {t("discriminator")}
+        {props.bridge.commissioning.discriminator}
+      </div>
+      <div>
+        {t("manual_pairing_code")}
+        {props.bridge.commissioning.manualPairingCode}
+      </div>
+      <div>
+        {t("qr_pairing_code")}
+        {props.bridge.commissioning.qrPairingCode}
+      </div>
     </Typography>
   );
 };

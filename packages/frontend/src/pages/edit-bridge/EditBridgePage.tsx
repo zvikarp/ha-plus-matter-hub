@@ -1,3 +1,5 @@
+import { useLocalizer } from "@ha-plus/ui/react";
+import { PageHeader } from "@ha-plus/ui/react-mui";
 import type { BridgeConfig } from "@ha-plus-matter-hub/common";
 import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
@@ -12,8 +14,11 @@ import {
   useUsedPorts,
 } from "../../hooks/data/bridges.ts";
 import { navigation } from "../../routes.tsx";
+import messages from "../../translations/en.json";
 
 export const EditBridgePage = () => {
+  const t = useLocalizer(messages);
+
   const notifications = useNotifications();
   const navigate = useNavigate();
 
@@ -49,7 +54,7 @@ export const EditBridgePage = () => {
     await updateBridge({ ...config, id: bridgeId })
       .then(() =>
         notifications.show({
-          message: "Update completed",
+          message: t("update_completed"),
           severity: "success",
         }),
       )
@@ -60,22 +65,22 @@ export const EditBridgePage = () => {
   };
 
   if (!isInitialized || isLoading || !usedPorts) {
-    return <PageLoading label="Loading bridge configuration" />;
+    return <PageLoading label={t("loading_bridge_configuration")} />;
   }
   if (error) {
     return (
       <PageMessage
         kind="error"
-        title="Could not load this bridge"
-        message={error.message ?? "The bridge service did not respond."}
+        title={t("could_not_load_this_bridge")}
+        message={error.message ?? t("the_bridge_service_did_not_respond")}
       />
     );
   }
   if (!bridge || !bridgeConfig) {
     return (
       <PageMessage
-        title="Bridge not found"
-        message="It may have been removed from HA+ Matter Hub."
+        title={t("bridge_not_found")}
+        message={t("it_may_have_been_removed_from_ha_matter_hub")}
       />
     );
   }
@@ -84,11 +89,13 @@ export const EditBridgePage = () => {
     <Stack spacing={4}>
       <Breadcrumbs
         items={[
-          { name: "Bridges", to: navigation.bridges },
+          { name: t("bridges"), to: navigation.bridges },
           { name: bridge.name, to: navigation.bridge(bridgeId) },
-          { name: "Edit", to: navigation.editBridge(bridgeId) },
+          { name: t("common.edit"), to: navigation.editBridge(bridgeId) },
         ]}
       />
+
+      <PageHeader title={t("edit_bridge", { name: bridge.name })} />
 
       <BridgeConfigEditor
         bridgeId={bridgeId}

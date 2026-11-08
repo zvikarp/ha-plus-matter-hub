@@ -1,4 +1,5 @@
 import { muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
 import type { EndpointData } from "@ha-plus-matter-hub/common";
 import SearchIcon from "@mui/icons-material/Search";
 import Box from "@mui/material/Box";
@@ -14,6 +15,7 @@ import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useEffect, useMemo, useState } from "react";
+import messages from "../../translations/en.json";
 import { PageMessage } from "../misc/PageState.tsx";
 import { EndpointIcon } from "./EndpointIcon.tsx";
 import { getEndpointName } from "./EndpointName.tsx";
@@ -30,6 +32,8 @@ export interface EndpointListProps {
 }
 
 export const EndpointList = ({ endpoint }: EndpointListProps) => {
+  const t = useLocalizer(messages);
+
   const devices = useMemo(() => listDevices(endpoint), [endpoint]);
   const [query, setQuery] = useState("");
   const [selectedItem, setSelectedItem] = useState<EndpointData>();
@@ -63,8 +67,10 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
   if (devices.length === 0) {
     return (
       <PageMessage
-        title="No exposed devices"
-        message="Edit this bridge to include Home Assistant entities, then refresh the bridge."
+        title={t("no_exposed_devices")}
+        message={t(
+          "edit_this_bridge_to_include_home_assistant_entities_then_refresh_the_bridge",
+        )}
       />
     );
   }
@@ -74,15 +80,19 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
       <Grid size={{ xs: 12, md: 5 }}>
         <Stack spacing={2}>
           <Box>
-            <Typography variant="h6">Devices</Typography>
+            <Typography variant="h6">{t("devices_2")}</Typography>
             <Typography variant="body2" color="text.secondary">
-              {devices.length} exposed{" "}
-              {devices.length === 1 ? "device" : "devices"}
+              {t(
+                devices.length === 1
+                  ? "exposed_device_count"
+                  : "exposed_devices_count",
+                { count: devices.length },
+              )}
             </Typography>
           </Box>
           <TextField
             fullWidth
-            label="Search devices"
+            label={t("search_devices")}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
             slotProps={{
@@ -98,10 +108,10 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
           <Paper variant="outlined" sx={muiStyles.scrollableList}>
             {groupedDevices.length === 0 ? (
               <Typography color="text.secondary" sx={muiStyles.emptyList}>
-                No devices match “{query}”.
+                {t("no_devices_match_query", { query })}
               </Typography>
             ) : (
-              <List disablePadding aria-label="Exposed devices">
+              <List disablePadding aria-label={t("exposed_devices")}>
                 {groupedDevices.map(([type, items]) => (
                   <Box
                     component="li"
@@ -122,7 +132,9 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
                         </ListItemIcon>
                         <ListItemText
                           primary={getEndpointName(device)}
-                          secondary={`Endpoint ${device.endpoint}`}
+                          secondary={t("endpoint_number", {
+                            number: String(device.endpoint),
+                          })}
                           sx={muiStyles.wrapText}
                         />
                       </ListItemButton>
@@ -136,13 +148,13 @@ export const EndpointList = ({ endpoint }: EndpointListProps) => {
       </Grid>
       <Grid size={{ xs: 12, md: 7 }}>
         <Typography variant="h6" sx={muiStyles.sectionHeading}>
-          Device details
+          {t("device_details")}
         </Typography>
         {selectedItem ? (
           <EndpointState endpoint={selectedItem} />
         ) : (
           <Typography color="text.secondary">
-            Select a device to inspect its Matter details.
+            {t("select_a_device_to_inspect_its_matter_details")}
           </Typography>
         )}
       </Grid>

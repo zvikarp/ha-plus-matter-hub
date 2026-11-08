@@ -1,4 +1,5 @@
 import { globalStyles } from "@ha-plus/ui/mui";
+import { HaPreferencesProvider } from "@ha-plus/ui/react";
 import { StrictMode, useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import { Provider as StateProvider } from "react-redux";
@@ -53,15 +54,17 @@ const ThemedApp = () => {
   useEffect(() => startHaThemeSync(setHaTheme), []);
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <GlobalStyles styles={globalStyles} />
-      <AppErrorBoundary>
-        <NotificationsProvider>
-          <RouterProvider router={router} />
-        </NotificationsProvider>
-      </AppErrorBoundary>
-    </ThemeProvider>
+    <HaPreferencesProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <GlobalStyles styles={globalStyles} />
+        <AppErrorBoundary>
+          <NotificationsProvider>
+            <RouterProvider router={router} />
+          </NotificationsProvider>
+        </AppErrorBoundary>
+      </ThemeProvider>
+    </HaPreferencesProvider>
   );
 };
 

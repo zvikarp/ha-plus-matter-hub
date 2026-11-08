@@ -1,6 +1,7 @@
 import { json, jsonLanguage, jsonParseLinter } from "@codemirror/lang-json";
 import { linter } from "@codemirror/lint";
 import { editorHeight, muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -18,6 +19,7 @@ import {
 } from "codemirror-json-schema";
 import type { JSONSchema7 } from "json-schema";
 import { useCallback, useEffect, useMemo, useState } from "react";
+import messages from "../../../translations/en.json";
 import { ValidationErrors } from "./ValidationErrors.tsx";
 import type { ValidationError } from "./validation-error.ts";
 
@@ -53,6 +55,8 @@ function useValidator({ schema, customValidate }: JsonEditorProps) {
 }
 
 export const JsonEditor = (props: JsonEditorProps) => {
+  const t = useLocalizer(messages);
+
   const codeMirrorTheme = useCodeTheme();
 
   const [stringValue, setStringValue] = useState(() =>
@@ -110,7 +114,7 @@ export const JsonEditor = (props: JsonEditorProps) => {
           height={editorHeight}
         />
         <Button sx={muiStyles.editorAction} onClick={() => prettify()}>
-          Prettify
+          {t("prettify")}
         </Button>
       </Box>
       {errors.length > 0 && (

@@ -1,4 +1,6 @@
 import { muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
+import { PageHeader } from "@ha-plus/ui/react-mui";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -23,12 +25,15 @@ import { useTimer } from "../../hooks/timer.ts";
 import { navigation } from "../../routes.tsx";
 import { loadDevices } from "../../state/devices/device-actions.ts";
 import { useAppDispatch } from "../../state/hooks.ts";
+import messages from "../../translations/en.json";
 import { BridgeMoreMenu } from "./BridgeMoreMenu.tsx";
 
 const MemoizedBridgeDetails = memo(BridgeDetails);
 const MemoizedEndpointList = memo(EndpointList);
 
 export const BridgeDetailsPage = () => {
+  const t = useLocalizer(messages);
+
   const dispatch = useAppDispatch();
 
   const { bridgeId } = useParams() as { bridgeId: string };
@@ -52,15 +57,15 @@ export const BridgeDetailsPage = () => {
   } = useDevices(bridgeId);
 
   if (!bridgeInitialized || (!bridge && bridgeLoading)) {
-    return <PageLoading label="Loading bridge details" />;
+    return <PageLoading label={t("loading_bridge_details")} />;
   }
 
   if (bridgeError) {
     return (
       <PageMessage
         kind="error"
-        title="Could not load this bridge"
-        message={bridgeError.message ?? "The bridge service did not respond."}
+        title={t("could_not_load_this_bridge")}
+        message={bridgeError.message ?? t("the_bridge_service_did_not_respond")}
       />
     );
   }
@@ -68,8 +73,8 @@ export const BridgeDetailsPage = () => {
   if (!bridge) {
     return (
       <PageMessage
-        title="Bridge not found"
-        message="It may have been removed from HA+ Matter Hub."
+        title={t("bridge_not_found")}
+        message={t("it_may_have_been_removed_from_ha_matter_hub")}
       />
     );
   }
@@ -78,17 +83,19 @@ export const BridgeDetailsPage = () => {
     <Stack spacing={4}>
       <Breadcrumbs
         items={[
-          { name: "Bridges", to: navigation.bridges },
+          { name: t("bridges"), to: navigation.bridges },
           { name: bridge.name, to: navigation.bridge(bridgeId) },
         ]}
       />
 
-      <Box sx={muiStyles.titleRow}>
-        <Typography variant="h4" sx={muiStyles.wrappingHeading}>
-          {bridge.name} <BridgeStatusIcon status={bridge.status} />
-        </Typography>
-        <BridgeMoreMenu bridge={bridgeId} bridgeName={bridge.name} />
-      </Box>
+      <PageHeader
+        title={
+          <>
+            {bridge.name} <BridgeStatusIcon status={bridge.status} />
+          </>
+        }
+        actions={<BridgeMoreMenu bridge={bridgeId} bridgeName={bridge.name} />}
+      />
 
       <BridgeStatusHint status={bridge.status} reason={bridge.statusReason} />
 
@@ -97,9 +104,9 @@ export const BridgeDetailsPage = () => {
       <Stack spacing={2}>
         <Box sx={muiStyles.wrappedActions}>
           {timer != null && (
-            <Tooltip title="Device state refreshes automatically.">
+            <Tooltip title={t("device_state_refreshes_automatically")}>
               <Typography variant="body2" color="textSecondary">
-                Refreshing in {timer} seconds
+                {t("refreshing_in_seconds", { count: timer })}
               </Typography>
             </Tooltip>
           )}
@@ -109,18 +116,18 @@ export const BridgeDetailsPage = () => {
             onClick={() => dispatch(loadDevices(bridgeId))}
             disabled={devicesLoading}
           >
-            Refresh now
+            {t("refresh_now")}
           </Button>
         </Box>
 
         {(!devicesInitialized || devicesLoading) && !devices ? (
-          <PageLoading label="Loading exposed devices" />
+          <PageLoading label={t("loading_exposed_devices")} />
         ) : devicesError ? (
           <PageMessage
             kind="error"
-            title="Could not load exposed devices"
+            title={t("could_not_load_exposed_devices")}
             message={
-              devicesError.message ?? "The bridge did not return its devices."
+              devicesError.message ?? t("the_bridge_did_not_return_its_devices")
             }
             action={
               <RetryButton
@@ -132,8 +139,8 @@ export const BridgeDetailsPage = () => {
           <MemoizedEndpointList endpoint={devices} />
         ) : (
           <PageMessage
-            title="No device data yet"
-            message="Refresh the bridge to try again."
+            title={t("no_device_data_yet")}
+            message={t("refresh_the_bridge_to_try_again")}
           />
         )}
       </Stack>

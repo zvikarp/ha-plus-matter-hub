@@ -1,4 +1,11 @@
-import { iframePanelStyles } from "@ha-plus/ui";
+import {
+  applyPreferences,
+  iconButton,
+  iframePanelStyles,
+  integrationUrl,
+  localize,
+  navigate,
+} from "@ha-plus/ui";
 import { path } from "../custom_components/ha_plus_matter_hub/frontend/icon.js";
 
 window.customIcons = window.customIcons || {};
@@ -10,6 +17,8 @@ window.customIcons["matter-hub-plus"] = {
 class MatterHubPanel extends HTMLElement {
   set hass(value) {
     this._hass = value;
+    applyPreferences(this, value);
+    this.updateSettings();
     if (this.menu) this.menu.hass = value;
   }
   set narrow(value) {
@@ -36,9 +45,25 @@ class MatterHubPanel extends HTMLElement {
       this.menu.hass = this._hass;
       this.menu.narrow = this._narrow;
       this.frame = root.querySelector("iframe");
+      this.updateSettings();
     }
     this.listener = (event) => this.handleRequest(event);
     window.addEventListener("message", this.listener);
+  }
+  updateSettings() {
+    if (!this.shadowRoot) return;
+    this.shadowRoot.querySelector("[data-settings]")?.remove();
+    if (!this._hass?.user?.is_admin) return;
+    const settings = iconButton(
+      localize(this._hass, {}, "settings"),
+      "mdi:cog",
+      () => {
+        if (this._hass?.user?.is_admin)
+          navigate(this, integrationUrl("ha_plus_matter_hub"));
+      },
+    );
+    settings.dataset.settings = "";
+    this.shadowRoot.querySelector("header").append(settings);
   }
   disconnectedCallback() {
     window.removeEventListener("message", this.listener);

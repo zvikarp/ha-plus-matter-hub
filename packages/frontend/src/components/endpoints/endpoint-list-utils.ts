@@ -1,5 +1,9 @@
+import { createLocalizer, haContext } from "@ha-plus/ui/ha";
 import type { EndpointData } from "@ha-plus-matter-hub/common";
+import messages from "../../translations/en.json";
 import { getEndpointName } from "./EndpointName.tsx";
+
+const tr = createLocalizer(haContext, messages);
 
 const structuralTypes = new Set(["RootNode", "Aggregator"]);
 
@@ -18,7 +22,7 @@ export function listDevices(root: EndpointData): DeviceListItem[] {
     const { endpoint, inheritedArea } = queue.shift()!;
     const area = getEndpointArea(endpoint) ?? inheritedArea;
     if (!structuralTypes.has(endpoint.type.name)) {
-      devices.push({ endpoint, area: area ?? "Unassigned" });
+      devices.push({ endpoint, area: area ?? tr("unassigned") });
     }
     queue.push(
       ...endpoint.parts.map((part) => ({
