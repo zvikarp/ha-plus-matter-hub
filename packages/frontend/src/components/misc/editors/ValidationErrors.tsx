@@ -14,7 +14,7 @@ export const ValidationErrors = (props: ValidationErrorProps) => {
       {props.validationErrors.map((error, idx) => (
         <ListItem disableGutters disablePadding key={idx.toString()}>
           <Stack direction="row" spacing={1}>
-            <Typography variant="body2">&bull;</Typography>
+            <Typography variant="body2">{"•"}</Typography>
             <Typography variant="caption">
               {error.instancePath.length === 0 ? "/" : error.instancePath}
             </Typography>

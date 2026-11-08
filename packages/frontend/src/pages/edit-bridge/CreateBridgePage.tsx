@@ -1,3 +1,5 @@
+import { useLocalizer } from "@ha-plus/ui/react";
+import { PageHeader } from "@ha-plus/ui/react-mui";
 import type { BridgeConfig } from "@ha-plus-matter-hub/common";
 import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
@@ -15,6 +17,7 @@ import {
   useUsedPorts,
 } from "../../hooks/data/bridges.ts";
 import { navigation } from "../../routes.tsx";
+import messages from "../../translations/en.json";
 
 const defaultConfig: Omit<BridgeConfig, "port"> = {
   name: "",
@@ -34,6 +37,8 @@ function nextFreePort(usedPorts: Record<number, string>) {
 }
 
 export const CreateBridgePage = () => {
+  const t = useLocalizer(messages);
+
   const notifications = useNotifications();
   const navigate = useNavigate();
 
@@ -56,7 +61,7 @@ export const CreateBridgePage = () => {
   const saveAction = async (config: BridgeConfig) => {
     await createBridge({ ...config })
       .then(() =>
-        notifications.show({ message: "Bridge saved", severity: "success" }),
+        notifications.show({ message: t("bridge_saved"), severity: "success" }),
       )
       .then(() => cancelAction())
       .catch((err: Error) =>
@@ -68,36 +73,41 @@ export const CreateBridgePage = () => {
     return (
       <PageMessage
         kind="error"
-        title="Could not prepare a new bridge"
-        message={bridges.error.message ?? "The bridge service did not respond."}
+        title={t("could_not_prepare_a_new_bridge")}
+        message={
+          bridges.error.message ?? t("the_bridge_service_did_not_respond")
+        }
       />
     );
   }
 
   if (!bridgeConfig || !usedPorts) {
-    return <PageLoading label="Preparing bridge configuration" />;
+    return <PageLoading label={t("preparing_bridge_configuration")} />;
   }
 
   return (
     <Stack spacing={4}>
       <Breadcrumbs
         items={[
-          { name: "Bridges", to: navigation.bridges },
-          { name: "Create New", to: navigation.createBridge },
+          { name: t("bridges"), to: navigation.bridges },
+          { name: t("create_new"), to: navigation.createBridge },
         ]}
       />
 
       {showReuseBridgeHint && (
         <Alert severity="info" variant="outlined">
           <Typography>
-            Did you know that you can connect the same bridge with multiple
-            assistants?{" "}
+            {t(
+              "did_you_know_that_you_can_connect_the_same_bridge_with_multiple_assistants",
+            )}{" "}
             <Link href={navigation.faq.multiFabric} target="_blank">
-              Learn more.
+              {t("learn_more")}
             </Link>
           </Typography>
         </Alert>
       )}
+
+      <PageHeader title={t("create_bridge")} />
 
       <BridgeConfigEditor
         bridge={bridgeConfig}

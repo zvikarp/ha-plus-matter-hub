@@ -36,7 +36,7 @@
   "devDependencies": {
     "@biomejs/biome": "^2.3.12",
     "@dotenvx/dotenvx": "^1.52.0",
-    "@ha-plus/ui": "https://github.com/zvikarp/ha-plus-packages/releases/download/ui-v0.3.0/ha-plus-ui-0.3.0.tgz",
+    "@ha-plus/ui": "https://github.com/zvikarp/ha-plus-packages/releases/download/ui-v0.3.1/ha-plus-ui-0.3.1.tgz",
     "@swc-node/register": "~1.11.1",
     "@swc/core": "~1.15.10",
     "@swc/helpers": "~0.5.18",

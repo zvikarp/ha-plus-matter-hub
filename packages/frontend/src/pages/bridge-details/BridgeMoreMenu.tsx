@@ -1,4 +1,5 @@
 import { muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import MoreVert from "@mui/icons-material/MoreVert";
@@ -20,6 +21,7 @@ import { Link as RouterLink, useNavigate } from "react-router";
 import { useNotifications } from "../../components/notifications/use-notifications.ts";
 import { useDeleteBridge, useResetBridge } from "../../hooks/data/bridges.ts";
 import { navigation } from "../../routes.tsx";
+import messages from "../../translations/en.json";
 
 export interface BridgeMoreMenuProps {
   bridge: string;
@@ -29,6 +31,8 @@ export interface BridgeMoreMenuProps {
 type DestructiveAction = "reset" | "delete";
 
 export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
+  const t = useLocalizer(messages);
+
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [action, setAction] = React.useState<DestructiveAction>();
   const [isProcessing, setIsProcessing] = React.useState(false);
@@ -53,13 +57,13 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
     await factoryReset(bridge)
       .then(() =>
         notification.show({
-          message: "Bridge reset successfully",
+          message: t("bridge_reset_successfully"),
           severity: "success",
         }),
       )
       .catch((reason) =>
         notification.show({
-          message: `Failed to reset bridge: ${String(reason)}`,
+          message: t("failed_to_reset_bridge", { value1: String(reason) }),
           severity: "error",
         }),
       );
@@ -69,14 +73,14 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
     await deleteBridge(bridge)
       .then(() =>
         notification.show({
-          message: "Bridge deleted successfully",
+          message: t("bridge_deleted_successfully"),
           severity: "success",
         }),
       )
       .then(() => navigate(navigation.bridges))
       .catch((reason) =>
         notification.show({
-          message: `Failed to delete bridge: ${String(reason)}`,
+          message: t("failed_to_delete_bridge", { value1: String(reason) }),
           severity: "error",
         }),
       );
@@ -100,7 +104,7 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
     <>
       <IconButton
         onClick={handleOpen}
-        aria-label={`More actions for ${bridgeName}`}
+        aria-label={t("more_actions_for", { value1: bridgeName })}
         sx={muiStyles.iconAction}
       >
         <MoreVert />
@@ -110,20 +114,20 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
           <ListItemIcon>
             <EditIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Edit</ListItemText>
+          <ListItemText>{t("common.edit")}</ListItemText>
         </MenuItem>
         <Divider />
         <MenuItem onClick={() => requestAction("reset")}>
           <ListItemIcon>
             <ResetIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Factory Reset</ListItemText>
+          <ListItemText>{t("factory_reset")}</ListItemText>
         </MenuItem>
         <MenuItem onClick={() => requestAction("delete")}>
           <ListItemIcon>
             <DeleteIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Delete</ListItemText>
+          <ListItemText>{t("common.delete")}</ListItemText>
         </MenuItem>
       </Menu>
       <Dialog
@@ -132,18 +136,20 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
         aria-labelledby="bridge-action-title"
       >
         <DialogTitle id="bridge-action-title">
-          {action === "delete" ? "Delete bridge?" : "Factory reset bridge?"}
+          {action === "delete"
+            ? t("delete_bridge_question")
+            : t("reset_bridge_question")}
         </DialogTitle>
         <DialogContent>
           <DialogContentText sx={muiStyles.wrapText}>
             {action === "delete"
-              ? `This permanently deletes “${bridgeName}” and its configuration. Paired controllers will no longer be able to use its devices.`
-              : `This removes every controller paired with “${bridgeName}”. The bridge configuration stays, but you will need to pair each controller again.`}
+              ? t("delete_bridge_confirmation", { name: bridgeName })
+              : t("reset_bridge_confirmation", { name: bridgeName })}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setAction(undefined)} disabled={isProcessing}>
-            Cancel
+            {t("common.cancel")}
           </Button>
           <Button
             color="error"
@@ -152,10 +158,10 @@ export const BridgeMoreMenu = ({ bridge, bridgeName }: BridgeMoreMenuProps) => {
             disabled={isProcessing}
           >
             {isProcessing
-              ? "Working…"
+              ? t("working")
               : action === "delete"
-                ? "Delete bridge"
-                : "Factory reset"}
+                ? t("delete_bridge")
+                : t("factory_reset")}
           </Button>
         </DialogActions>
       </Dialog>

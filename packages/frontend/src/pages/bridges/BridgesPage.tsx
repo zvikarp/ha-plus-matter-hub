@@ -1,6 +1,6 @@
-import { muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
+import { PageHeader } from "@ha-plus/ui/react-mui";
 import { Add } from "@mui/icons-material";
-import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { Link } from "react-router";
@@ -14,22 +14,25 @@ import { useBridges } from "../../hooks/data/bridges";
 import { navigation } from "../../routes.tsx";
 import { loadBridges } from "../../state/bridges/bridge-actions.ts";
 import { useAppDispatch } from "../../state/hooks.ts";
+import messages from "../../translations/en.json";
 
 export const BridgesPage = () => {
+  const t = useLocalizer(messages);
+
   const dispatch = useAppDispatch();
   const { content: bridges, isInitialized, isLoading, error } = useBridges();
 
   if ((!isInitialized || isLoading) && !bridges) {
-    return <PageLoading label="Loading bridges" />;
+    return <PageLoading label={t("loading_bridges")} />;
   }
 
   if (error) {
     return (
       <PageMessage
         kind="error"
-        title="Could not load bridges"
+        title={t("could_not_load_bridges")}
         message={
-          error.message ?? "HA+ Matter Hub could not reach the bridge service."
+          error.message ?? t("ha_matter_hub_could_not_reach_the_bridge_service")
         }
         action={<RetryButton onClick={() => void dispatch(loadBridges())} />}
       />
@@ -39,8 +42,10 @@ export const BridgesPage = () => {
   if (!bridges?.length) {
     return (
       <PageMessage
-        title="Create your first Matter bridge"
-        message="Choose which Home Assistant devices to expose, then pair the bridge with your preferred smart-home controller."
+        title={t("create_your_first_matter_bridge")}
+        message={t(
+          "choose_which_home_assistant_devices_to_expose_then_pair_the_bridge_with_your_preferre",
+        )}
         action={
           <Button
             component={Link}
@@ -48,7 +53,7 @@ export const BridgesPage = () => {
             startIcon={<Add />}
             variant="contained"
           >
-            Create bridge
+            {t("create_bridge")}
           </Button>
         }
       />
@@ -57,16 +62,19 @@ export const BridgesPage = () => {
 
   return (
     <Stack spacing={4}>
-      <Box sx={muiStyles.pageActions}>
-        <Button
-          component={Link}
-          to={navigation.createBridge}
-          endIcon={<Add />}
-          variant="outlined"
-        >
-          Create new bridge
-        </Button>
-      </Box>
+      <PageHeader
+        title={t("bridges")}
+        actions={
+          <Button
+            component={Link}
+            to={navigation.createBridge}
+            endIcon={<Add />}
+            variant="outlined"
+          >
+            {t("create_new_bridge")}
+          </Button>
+        }
+      />
 
       <BridgeList bridges={bridges} />
     </Stack>

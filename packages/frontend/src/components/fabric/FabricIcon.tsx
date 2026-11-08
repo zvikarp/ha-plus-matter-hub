@@ -1,4 +1,5 @@
 import { inlineStyles, muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
 import type { BridgeFabric } from "@ha-plus-matter-hub/common";
 import QuestionMark from "@mui/icons-material/QuestionMark";
 import Box from "@mui/material/Box";
@@ -8,6 +9,7 @@ import AmazonIcon from "../../assets/brands/Amazon.svg?react";
 import AppleIcon from "../../assets/brands/Apple.svg?react";
 import GoogleIcon from "../../assets/brands/Google.svg?react";
 import SamsungIcon from "../../assets/brands/Samsung.svg?react";
+import messages from "../../translations/en.json";
 
 export interface FabricIconProps {
   fabric: BridgeFabric;
@@ -40,10 +42,15 @@ function getIcon(fabric: BridgeFabric) {
 }
 
 export const FabricIcon = ({ fabric }: FabricIconProps) => {
+  const t = useLocalizer(messages);
+
   const BrandIcon = useMemo(() => getIcon(fabric), [fabric]);
   return (
     <Tooltip
-      title={`${fabric.label} (0x${fabric.rootVendorId.toString(16)})`}
+      title={t("0x", {
+        value1: fabric.label,
+        value2: fabric.rootVendorId.toString(16),
+      })}
       arrow
     >
       <Box component="span" sx={muiStyles.themedIcon}>

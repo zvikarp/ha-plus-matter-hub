@@ -1,3 +1,7 @@
+import { createLocalizer, haContext } from "@ha-plus/ui/ha";
+import messages from "../translations/en.json";
+
+const tr = createLocalizer(haContext, messages);
 /** Relay Marketplace panel requests through HA's authenticated, admin-only WebSocket. */
 export function inMarketplacePanel(): boolean {
   return (
@@ -15,7 +19,7 @@ export function request(
     const channel = new MessageChannel();
     const timer = window.setTimeout(() => {
       channel.port1.close();
-      reject(new Error("Matter Hub request timed out"));
+      reject(new Error(tr("matter_hub_request_timed_out")));
     }, 35000);
     channel.port1.onmessage = (event) => {
       window.clearTimeout(timer);

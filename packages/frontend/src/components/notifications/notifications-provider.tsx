@@ -1,3 +1,4 @@
+import { showToast } from "@ha-plus/ui/ha";
 import { muiStyles } from "@ha-plus/ui/mui";
 import Alert from "@mui/material/Alert";
 import Snackbar from "@mui/material/Snackbar";
@@ -14,6 +15,7 @@ interface Notification extends NotificationOptions {
 export const NotificationsProvider = (props: PropsWithChildren) => {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const show = useCallback((notification: NotificationOptions) => {
+    if (showToast(undefined, notification.message)) return;
     setNotifications((prev) => [
       ...prev,
       {

@@ -1,9 +1,12 @@
+import { showMoreInfo } from "@ha-plus/ui/ha";
 import { muiStyles } from "@ha-plus/ui/mui";
+import { useLocalizer } from "@ha-plus/ui/react";
 import { ClusterId, type EndpointData } from "@ha-plus-matter-hub/common";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Accordion from "@mui/material/Accordion";
 import AccordionDetails from "@mui/material/AccordionDetails";
 import AccordionSummary from "@mui/material/AccordionSummary";
+import Button from "@mui/material/Button";
 import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Table from "@mui/material/Table";
@@ -14,6 +17,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
+import messages from "../../translations/en.json";
 
 export interface EndpointStateProps {
   endpoint: EndpointData;
@@ -22,6 +26,8 @@ export interface EndpointStateProps {
 const ignoredBehaviors = [ClusterId.homeAssistantEntity];
 
 export const EndpointState = (props: EndpointStateProps) => {
+  const t = useLocalizer(messages);
+
   const allBehaviors = useMemo(
     () =>
       Object.keys(
@@ -35,19 +41,30 @@ export const EndpointState = (props: EndpointStateProps) => {
   );
   const metadata = useMemo(
     () => ({
-      "Endpoint ID": props.endpoint.id.local,
-      "Endpoint Type": `${props.endpoint.type.name} (${props.endpoint.type.id})`,
-      "Endpoint Number": props.endpoint.endpoint,
-      "# of Child Endpoints": props.endpoint.parts.length,
+      [t("endpoint_id")]: props.endpoint.id.local,
+      [t("endpoint_type")]:
+        `${props.endpoint.type.name} (${props.endpoint.type.id})`,
+      [t("endpoint_number_label")]: props.endpoint.endpoint,
+      [t("child_endpoints")]: props.endpoint.parts.length,
     }),
-    [props.endpoint],
+    [props.endpoint, t],
   );
 
+  const source = (
+    props.endpoint.state as {
+      homeAssistantEntity?: { entity?: { entity_id?: string } };
+    }
+  ).homeAssistantEntity?.entity?.entity_id;
   return (
     <>
       <Paper sx={muiStyles.sectionPaper} variant="outlined">
         <Stack spacing={2}>
-          <Typography component="span">About this endpoint</Typography>
+          <Typography component="span">{t("about_this_endpoint")}</Typography>
+          {source && (
+            <Button onClick={() => showMoreInfo(undefined, source)}>
+              {t("open_in_home_assistant")}
+            </Button>
+          )}
           <ObjectTable value={metadata} hideHead></ObjectTable>
         </Stack>
       </Paper>
@@ -59,7 +76,8 @@ export const EndpointState = (props: EndpointStateProps) => {
             aria-controls="panel1-content"
           >
             <Typography component="span" sx={muiStyles.wrapText}>
-              Behavior: <strong>{behavior}</strong>
+              {t("behavior")}
+              <strong>{behavior}</strong>
             </Typography>
           </AccordionSummary>
           <AccordionDetails>
@@ -75,6 +93,8 @@ const ObjectTable = <T extends object>(props: {
   value: T;
   hideHead?: boolean;
 }) => {
+  const t = useLocalizer(messages);
+
   const properties = useMemo(
     () => Object.keys(props.value) as (keyof T & string)[],
     [props.value],
@@ -85,8 +105,8 @@ const ObjectTable = <T extends object>(props: {
         {!props.hideHead && (
           <TableHead>
             <TableRow>
-              <TableCell>Property</TableCell>
-              <TableCell>Value</TableCell>
+              <TableCell>{t("property")}</TableCell>
+              <TableCell>{t("value")}</TableCell>
             </TableRow>
           </TableHead>
         )}
