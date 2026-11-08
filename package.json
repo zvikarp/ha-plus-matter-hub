@@ -50,6 +50,6 @@
     "typescript": "^5.9.3",
     "vite": "^7.3.1",
     "vitest": "^4.0.18",
-    "@ha-plus/frontend": "https://github.com/zvikarp/ha-plus-packages/releases/download/frontend-v0.1.0/ha-plus-frontend-0.1.0.tgz"
+    "@ha-plus/frontend": "https://github.com/zvikarp/ha-plus-packages/releases/download/frontend-v0.1.2/ha-plus-frontend-0.1.2.tgz"
   }
 }
