@@ -1,10 +1,5 @@
 import { useLocalizer } from "@ha-plus/ui/react";
-import { PageHeader } from "@ha-plus/ui/react-mui";
-import { Add } from "@mui/icons-material";
-import Button from "@mui/material/Button";
-import Stack from "@mui/material/Stack";
-import { Link } from "react-router";
-import { BridgeList } from "../../components/bridge/BridgeList";
+import { Navigate } from "react-router";
 import {
   PageLoading,
   PageMessage,
@@ -46,37 +41,9 @@ export const BridgesPage = () => {
         message={t(
           "choose_which_home_assistant_devices_to_expose_then_pair_the_bridge_with_your_preferre",
         )}
-        action={
-          <Button
-            component={Link}
-            to={navigation.createBridge}
-            startIcon={<Add />}
-            variant="contained"
-          >
-            {t("create_bridge")}
-          </Button>
-        }
       />
     );
   }
 
-  return (
-    <Stack spacing={4}>
-      <PageHeader
-        title={t("bridges")}
-        actions={
-          <Button
-            component={Link}
-            to={navigation.createBridge}
-            startIcon={<Add />}
-            variant="contained"
-          >
-            {t("create_new_bridge")}
-          </Button>
-        }
-      />
-
-      <BridgeList bridges={bridges} />
-    </Stack>
-  );
+  return <Navigate to={navigation.bridge(bridges[0].id)} replace />;
 };

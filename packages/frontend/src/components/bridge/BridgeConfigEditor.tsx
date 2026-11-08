@@ -1,18 +1,17 @@
 import { haContext, localizeSchema } from "@ha-plus/ui/ha";
-import { muiStyles } from "@ha-plus/ui/mui";
 import { useLocalizer } from "@ha-plus/ui/react";
+import { FormActions } from "@ha-plus/ui/react-mui";
 import {
   type BridgeConfig,
   bridgeConfigSchema,
 } from "@ha-plus-matter-hub/common";
-import { LibraryBooks, TextFields } from "@mui/icons-material";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
-import { useCallback, useRef, useState } from "react";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import { useCallback, useId, useRef, useState } from "react";
 import { navigation } from "../../routes.tsx";
 import messages from "../../translations/en.json";
 import { FormEditor } from "../misc/editors/FormEditor";
@@ -40,13 +39,7 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
   const [editorMode, setEditorMode] = useState<BridgeEditorMode>(
     BridgeEditorMode.FIELDS_EDITOR,
   );
-  const toggleEditor = () => {
-    setEditorMode(
-      editorMode === BridgeEditorMode.FIELDS_EDITOR
-        ? BridgeEditorMode.JSON_EDITOR
-        : BridgeEditorMode.FIELDS_EDITOR,
-    );
-  };
+  const editorId = useId();
 
   const [config, setConfig] = useState<object | undefined>(props.bridge);
   const [isValid, setIsValid] = useState<boolean>(true);
@@ -106,73 +99,63 @@ export const BridgeConfigEditor = (props: BridgeConfigEditorProps) => {
       </Alert>
 
       <Stack spacing={2}>
-        <Box sx={muiStyles.endRow}>
-          <Button
-            onClick={() => toggleEditor()}
+        <Tabs
+          value={editorMode}
+          onChange={(_, value: BridgeEditorMode) => setEditorMode(value)}
+          aria-label={t("bridge_editor")}
+        >
+          <Tab
+            value={BridgeEditorMode.FIELDS_EDITOR}
+            label={t("form_editor")}
+            id={`${editorId}-fields-tab`}
+            aria-controls={`${editorId}-fields`}
             disabled={isSaving}
-            title={
-              editorMode === BridgeEditorMode.FIELDS_EDITOR
-                ? t("json_editor")
-                : t("form_editor")
-            }
-            aria-label={
-              editorMode === BridgeEditorMode.FIELDS_EDITOR
-                ? t("json_editor")
-                : t("form_editor")
-            }
-            sx={muiStyles.actionTarget}
-          >
-            {editorMode === BridgeEditorMode.FIELDS_EDITOR ? (
-              <TextFields />
-            ) : (
-              <LibraryBooks />
-            )}
-          </Button>
-        </Box>
+          />
+          <Tab
+            value={BridgeEditorMode.JSON_EDITOR}
+            label={t("json_editor")}
+            id={`${editorId}-json-tab`}
+            aria-controls={`${editorId}-json`}
+            disabled={isSaving}
+          />
+        </Tabs>
 
         {editorMode === BridgeEditorMode.FIELDS_EDITOR && (
-          <FormEditor
-            value={config ?? {}}
-            onChange={onChange}
-            schema={schema}
-            customValidate={validatePort}
-          />
+          <Box
+            role="tabpanel"
+            id={`${editorId}-fields`}
+            aria-labelledby={`${editorId}-fields-tab`}
+          >
+            <FormEditor
+              value={config ?? {}}
+              onChange={onChange}
+              schema={schema}
+              customValidate={validatePort}
+            />
+          </Box>
         )}
 
         {editorMode === BridgeEditorMode.JSON_EDITOR && (
-          <JsonEditor
-            value={config ?? {}}
-            onChange={onChange}
-            schema={schema}
-            customValidate={validatePort}
-          />
+          <Box
+            role="tabpanel"
+            id={`${editorId}-json`}
+            aria-labelledby={`${editorId}-json-tab`}
+          >
+            <JsonEditor
+              value={config ?? {}}
+              onChange={onChange}
+              schema={schema}
+              customValidate={validatePort}
+            />
+          </Box>
         )}
 
-        <Grid container>
-          <Grid size={{ xs: 6, sm: 4, md: 3 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              color="error"
-              onClick={props.onCancel}
-              disabled={isSaving}
-            >
-              {t("common.cancel")}
-            </Button>
-          </Grid>
-          <Grid size={{ xs: 0, sm: 4, md: 6 }} sx={muiStyles.desktopOnly} />
-          <Grid size={{ xs: 6, sm: 4, md: 3 }}>
-            <Button
-              fullWidth
-              variant="outlined"
-              disabled={!isValid || isSaving}
-              loading={isSaving}
-              onClick={saveAction}
-            >
-              {t("common.save")}
-            </Button>
-          </Grid>
-        </Grid>
+        <FormActions
+          onSave={saveAction}
+          onCancel={props.onCancel}
+          disabled={!isValid}
+          saving={isSaving}
+        />
       </Stack>
     </>
   );

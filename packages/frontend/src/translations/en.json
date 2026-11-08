@@ -70,7 +70,7 @@
   "choose_which_home_assistant_devices_to_expose_then_pair_the_bridge_with_your_preferre": "Choose which Home Assistant devices to expose, then pair the bridge with your preferred smart-home controller.",
   "create_bridge": "Create bridge",
   "bridges": "Bridges",
-  "create_new_bridge": "Create new bridge",
+  "create_new_bridge": "Create New Bridge",
   "bridge_saved": "Bridge saved",
   "could_not_prepare_a_new_bridge": "Could not prepare a new bridge",
   "preparing_bridge_configuration": "Preparing bridge configuration",
@@ -112,5 +112,7 @@
   "schema.An ISO 3166-1 alpha-2 code to represent the country in which the Node is located. Only needed if the commissioning fails due to missing country code.": "An ISO 3166-1 alpha-2 code to represent the country in which the Node is located. Only needed if the commissioning fails due to missing country code.",
   "schema.Repeat matching commands": "Repeat matching commands",
   "schema.Forward requests even when Home Assistant already reports the requested value. Useful after manual control. Applies only to requests the bridge receives; status updates are never replayed. Unchecked categories skip matching requests. Defaults preserve existing behavior.": "Forward requests even when Home Assistant already reports the requested value. Useful after manual control. Applies only to requests the bridge receives; status updates are never replayed. Unchecked categories skip matching requests. Defaults preserve existing behavior.",
-  "edit_bridge": "Edit {name}"
+  "edit_bridge": "Edit {name}",
+  "choose_bridge": "Choose a bridge",
+  "bridge_editor": "Bridge editor"
 }

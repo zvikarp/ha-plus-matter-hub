@@ -7,7 +7,6 @@ import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { QRCodeSVG } from "qrcode.react";
@@ -21,51 +20,49 @@ export interface BridgeDetailsProps {
 
 export const BridgeDetails = ({ bridge }: BridgeDetailsProps) => {
   return (
-    <Paper sx={muiStyles.padded}>
-      <Stack spacing={2}>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: "auto" }}>
-            <Pairing bridge={bridge} />
-          </Grid>
-          <Grid size={{ xs: 12, md: "grow" }} sx={muiStyles.shrinkable}>
-            <BasicInfo bridge={bridge} />
-          </Grid>
-          <Grid size={{ xs: 12, md: "grow" }} sx={muiStyles.shrinkable}>
-            <CommissioningInfo bridge={bridge} />
-          </Grid>
+    <Stack spacing={2}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: "auto" }}>
+          <Pairing bridge={bridge} />
         </Grid>
-        <Stack direction="row" spacing={1} useFlexGap sx={muiStyles.wrap}>
-          {bridge.filter.include.map((filter, idx) => (
-            <Chip
-              key={idx.toString()}
-              size="small"
-              icon={<AddIcon />}
-              label={
-                <span>
-                  <strong>{filter.type}</strong>: {filter.value}
-                </span>
-              }
-              color="success"
-              sx={muiStyles.wrappingChip}
-            />
-          ))}
-          {bridge.filter.exclude.map((filter, idx) => (
-            <Chip
-              key={idx.toString()}
-              size="small"
-              icon={<RemoveIcon />}
-              label={
-                <span>
-                  <strong>{filter.type}</strong>: {filter.value}
-                </span>
-              }
-              color="error"
-              sx={muiStyles.wrappingChip}
-            />
-          ))}
-        </Stack>
+        <Grid size={{ xs: 12, md: "grow" }} sx={muiStyles.shrinkable}>
+          <BasicInfo bridge={bridge} />
+        </Grid>
+        <Grid size={{ xs: 12, md: "grow" }} sx={muiStyles.shrinkable}>
+          <CommissioningInfo bridge={bridge} />
+        </Grid>
+      </Grid>
+      <Stack direction="row" spacing={1} useFlexGap sx={muiStyles.wrap}>
+        {bridge.filter.include.map((filter, idx) => (
+          <Chip
+            key={idx.toString()}
+            size="small"
+            icon={<AddIcon />}
+            label={
+              <span>
+                <strong>{filter.type}</strong>: {filter.value}
+              </span>
+            }
+            color="success"
+            sx={muiStyles.wrappingChip}
+          />
+        ))}
+        {bridge.filter.exclude.map((filter, idx) => (
+          <Chip
+            key={idx.toString()}
+            size="small"
+            icon={<RemoveIcon />}
+            label={
+              <span>
+                <strong>{filter.type}</strong>: {filter.value}
+              </span>
+            }
+            color="error"
+            sx={muiStyles.wrappingChip}
+          />
+        ))}
       </Stack>
-    </Paper>
+    </Stack>
   );
 };
 

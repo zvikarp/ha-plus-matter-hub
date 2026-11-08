@@ -50,7 +50,13 @@ export const FormEditor = (props: FormEditorProps) => {
   return (
     <Form
       schema={props.schema}
-      uiSchema={props.uiSchema}
+      uiSchema={{
+        ...props.uiSchema,
+        "ui:submitButtonOptions": {
+          ...props.uiSchema?.["ui:submitButtonOptions"],
+          norender: true,
+        },
+      }}
       validator={validator}
       formData={props.value}
       liveValidate="onChange"

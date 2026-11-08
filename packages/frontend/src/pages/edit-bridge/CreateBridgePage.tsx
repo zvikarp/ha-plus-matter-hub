@@ -1,13 +1,11 @@
 import { useLocalizer } from "@ha-plus/ui/react";
-import { PageHeader } from "@ha-plus/ui/react-mui";
+import { ContentCard } from "@ha-plus/ui/react-mui";
 import type { BridgeConfig } from "@ha-plus-matter-hub/common";
 import Alert from "@mui/material/Alert";
 import Link from "@mui/material/Link";
-import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useMemo } from "react";
 import { useNavigate } from "react-router";
-import { Breadcrumbs } from "../../components/breadcrumbs/Breadcrumbs.tsx";
 import { BridgeConfigEditor } from "../../components/bridge/BridgeConfigEditor.tsx";
 import { PageLoading, PageMessage } from "../../components/misc/PageState.tsx";
 import { useNotifications } from "../../components/notifications/use-notifications.ts";
@@ -59,14 +57,16 @@ export const CreateBridgePage = () => {
   };
 
   const saveAction = async (config: BridgeConfig) => {
-    await createBridge({ ...config })
-      .then(() =>
-        notifications.show({ message: t("bridge_saved"), severity: "success" }),
-      )
-      .then(() => cancelAction())
-      .catch((err: Error) =>
-        notifications.show({ message: err.message, severity: "error" }),
-      );
+    try {
+      const created = await createBridge({ ...config });
+      notifications.show({ message: t("bridge_saved"), severity: "success" });
+      navigate(navigation.bridge(created.id), { replace: true });
+    } catch (error) {
+      notifications.show({
+        message: (error as Error).message,
+        severity: "error",
+      });
+    }
   };
 
   if (bridges.error) {
@@ -86,14 +86,7 @@ export const CreateBridgePage = () => {
   }
 
   return (
-    <Stack spacing={4}>
-      <Breadcrumbs
-        items={[
-          { name: t("bridges"), to: navigation.bridges },
-          { name: t("create_new"), to: navigation.createBridge },
-        ]}
-      />
-
+    <ContentCard title={t("create_bridge")}>
       {showReuseBridgeHint && (
         <Alert severity="info" variant="outlined">
           <Typography>
@@ -107,14 +100,12 @@ export const CreateBridgePage = () => {
         </Alert>
       )}
 
-      <PageHeader title={t("create_bridge")} />
-
       <BridgeConfigEditor
         bridge={bridgeConfig}
         usedPorts={usedPorts}
         onSave={saveAction}
         onCancel={cancelAction}
       />
-    </Stack>
+    </ContentCard>
   );
 };

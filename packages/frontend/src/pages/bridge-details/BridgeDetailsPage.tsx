@@ -1,6 +1,6 @@
 import { muiStyles } from "@ha-plus/ui/mui";
 import { useLocalizer } from "@ha-plus/ui/react";
-import { PageHeader } from "@ha-plus/ui/react-mui";
+import { ContentCard } from "@ha-plus/ui/react-mui";
 import RefreshIcon from "@mui/icons-material/Refresh";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -9,7 +9,6 @@ import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 import { memo, useCallback } from "react";
 import { useParams } from "react-router";
-import { Breadcrumbs } from "../../components/breadcrumbs/Breadcrumbs.tsx";
 import { BridgeDetails } from "../../components/bridge/BridgeDetails.tsx";
 import { BridgeStatusHint } from "../../components/bridge/BridgeStatusHint.tsx";
 import { BridgeStatusIcon } from "../../components/bridge/BridgeStatusIcon.tsx";
@@ -22,7 +21,6 @@ import {
 import { useBridge } from "../../hooks/data/bridges.ts";
 import { useDevices } from "../../hooks/data/devices.ts";
 import { useTimer } from "../../hooks/timer.ts";
-import { navigation } from "../../routes.tsx";
 import { loadDevices } from "../../state/devices/device-actions.ts";
 import { useAppDispatch } from "../../state/hooks.ts";
 import messages from "../../translations/en.json";
@@ -80,23 +78,14 @@ export const BridgeDetailsPage = () => {
   }
 
   return (
-    <Stack spacing={4}>
-      <Breadcrumbs
-        items={[
-          { name: t("bridges"), to: navigation.bridges },
-          { name: bridge.name, to: navigation.bridge(bridgeId) },
-        ]}
-      />
-
-      <PageHeader
-        title={
-          <>
-            {bridge.name} <BridgeStatusIcon status={bridge.status} />
-          </>
-        }
-        actions={<BridgeMoreMenu bridge={bridgeId} bridgeName={bridge.name} />}
-      />
-
+    <ContentCard
+      title={
+        <>
+          {bridge.name} <BridgeStatusIcon status={bridge.status} />
+        </>
+      }
+      actions={<BridgeMoreMenu bridge={bridgeId} bridgeName={bridge.name} />}
+    >
       <BridgeStatusHint status={bridge.status} reason={bridge.statusReason} />
 
       <MemoizedBridgeDetails bridge={bridge} />
@@ -144,6 +133,6 @@ export const BridgeDetailsPage = () => {
           />
         )}
       </Stack>
-    </Stack>
+    </ContentCard>
   );
 };

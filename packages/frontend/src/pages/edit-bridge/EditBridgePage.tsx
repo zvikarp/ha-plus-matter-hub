@@ -1,10 +1,8 @@
 import { useLocalizer } from "@ha-plus/ui/react";
-import { PageHeader } from "@ha-plus/ui/react-mui";
+import { ContentCard } from "@ha-plus/ui/react-mui";
 import type { BridgeConfig } from "@ha-plus-matter-hub/common";
-import Stack from "@mui/material/Stack";
 import { useMemo } from "react";
 import { useNavigate, useParams } from "react-router";
-import { Breadcrumbs } from "../../components/breadcrumbs/Breadcrumbs.tsx";
 import { BridgeConfigEditor } from "../../components/bridge/BridgeConfigEditor.tsx";
 import { PageLoading, PageMessage } from "../../components/misc/PageState.tsx";
 import { useNotifications } from "../../components/notifications/use-notifications.ts";
@@ -47,7 +45,7 @@ export const EditBridgePage = () => {
   }, [isLoading, bridge]);
 
   const cancelAction = () => {
-    navigate(-1);
+    navigate(navigation.bridge(bridgeId));
   };
 
   const saveAction = async (config: BridgeConfig) => {
@@ -86,17 +84,7 @@ export const EditBridgePage = () => {
   }
 
   return (
-    <Stack spacing={4}>
-      <Breadcrumbs
-        items={[
-          { name: t("bridges"), to: navigation.bridges },
-          { name: bridge.name, to: navigation.bridge(bridgeId) },
-          { name: t("common.edit"), to: navigation.editBridge(bridgeId) },
-        ]}
-      />
-
-      <PageHeader title={t("edit_bridge", { name: bridge.name })} />
-
+    <ContentCard title={t("edit_bridge", { name: bridge.name })}>
       <BridgeConfigEditor
         bridgeId={bridgeId}
         bridge={bridgeConfig}
@@ -104,6 +92,6 @@ export const EditBridgePage = () => {
         onSave={saveAction}
         onCancel={cancelAction}
       />
-    </Stack>
+    </ContentCard>
   );
 };
