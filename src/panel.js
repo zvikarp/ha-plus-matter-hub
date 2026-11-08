@@ -1,11 +1,4 @@
-import {
-  applyPreferences,
-  iconButton,
-  iframePanelStyles,
-  integrationUrl,
-  localize,
-  navigate,
-} from "@ha-plus/ui";
+import { applyPreferences, iframePanelStyles, panelHeader } from "@ha-plus/ui";
 import { path } from "../custom_components/ha_plus_matter_hub/frontend/icon.js";
 
 window.customIcons = window.customIcons || {};
@@ -30,20 +23,7 @@ class MatterHubPanel extends HTMLElement {
       const root = this.attachShadow({ mode: "open" });
       root.innerHTML = `
         <style>${iframePanelStyles}</style>
-        <header>
-          <ha-menu-button></ha-menu-button>
-          <a class="brand" href="/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1" target="ha-plus-matter-hub-ui">
-            <img src="/ha_plus_matter_hub/logo.png" alt="" />
-            <span>HA+ Matter Hub</span>
-          </a>
-          <span class="version"></span>
-        </header>
         <iframe name="ha-plus-matter-hub-ui" title="HA+ Matter Hub" src="/ha_plus_matter_hub/ui/index.html?ha_plus_panel=1"></iframe>`;
-      root.querySelector(".version").textContent =
-        new URL(import.meta.url).searchParams.get("v") || "";
-      this.menu = root.querySelector("ha-menu-button");
-      this.menu.hass = this._hass;
-      this.menu.narrow = this._narrow;
       this.frame = root.querySelector("iframe");
       this.updateSettings();
     }
@@ -52,19 +32,27 @@ class MatterHubPanel extends HTMLElement {
   }
   updateSettings() {
     if (!this.shadowRoot) return;
-    this.shadowRoot.querySelector("[data-settings]")?.remove();
-    if (!this._hass?.user?.is_admin) return;
-    const settings = iconButton(
-      localize(this._hass, {}, "settings"),
-      "mdi:cog",
-      () => {
-        if (this._hass?.user?.is_admin)
-          navigate(this, integrationUrl("ha_plus_matter_hub"));
-      },
-    );
-    settings.dataset.settings = "";
-    this.shadowRoot.querySelector("header").append(settings);
+    const existing = this.shadowRoot.querySelector("header");
+    if (existing && existing._admin === Boolean(this._hass?.user?.is_admin)) {
+      const menu = existing.querySelector("ha-menu-button");
+      menu.hass = this._hass;
+      menu.narrow = this._narrow;
+      return;
+    }
+    const header = panelHeader("HA+ Matter Hub", {
+      hass: this._hass,
+      narrow: this._narrow,
+      domain: "ha_plus_matter_hub",
+      iconUrl: "/ha_plus_matter_hub/logo.png",
+      onRefresh: () => this.frame.contentWindow.location.reload(),
+    });
+    header._admin = Boolean(this._hass?.user?.is_admin);
+    const previous = this.shadowRoot.querySelector("header");
+    if (previous) previous.replaceWith(header);
+    else this.shadowRoot.insertBefore(header, this.frame);
+    this.menu = header.querySelector("ha-menu-button");
   }
+
   disconnectedCallback() {
     window.removeEventListener("message", this.listener);
   }

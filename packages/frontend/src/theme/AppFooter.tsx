@@ -27,7 +27,7 @@ export const AppFooter = () => {
             <Button
               fullWidth
               size="small"
-              variant="outlined"
+              variant="text"
               component={Link}
               href={link.url}
               target="_blank"

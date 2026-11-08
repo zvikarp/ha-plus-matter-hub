@@ -68,8 +68,8 @@ export const BridgesPage = () => {
           <Button
             component={Link}
             to={navigation.createBridge}
-            endIcon={<Add />}
-            variant="outlined"
+            startIcon={<Add />}
+            variant="contained"
           >
             {t("create_new_bridge")}
           </Button>
