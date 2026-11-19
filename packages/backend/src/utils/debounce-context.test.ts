@@ -87,4 +87,22 @@ describe("DebounceContext", () => {
       "two.3",
     ]);
   });
+
+  it("cancels every queued command and drops the pending buffers on teardown", async () => {
+    vi.useFakeTimers();
+    const callback = vi.fn();
+    const context = new DebounceContext<string>(callback);
+    try {
+      context.get("first", 100)("before");
+      context.get("second", 100)("before");
+      context.unregisterAll();
+      await vi.advanceTimersByTimeAsync(100);
+      expect(callback).not.toHaveBeenCalled();
+      context.get("first", 100)("after");
+      await vi.advanceTimersByTimeAsync(100);
+      expect(callback).toHaveBeenCalledExactlyOnceWith("first", ["after"]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
 });

@@ -243,13 +243,15 @@ export class ThermostatServerBase extends FeaturedBase {
     heat = (heat ?? cool)!;
     cool = (cool ?? heat)!;
 
+    // SetpointRaiseLower amounts are expressed in tenths of a degree Celsius.
+    const adjustment = request.amount / 10;
     const adjustedCool =
       request.mode !== Thermostat.SetpointRaiseLowerMode.Heat
-        ? cool.plus(request.amount / 1000, "°C")
+        ? cool.plus(adjustment, "°C")
         : cool;
     const adjustedHeat =
       request.mode !== Thermostat.SetpointRaiseLowerMode.Cool
-        ? heat.plus(request.amount / 1000, "°C")
+        ? heat.plus(adjustment, "°C")
         : heat;
     this.setTemperature(adjustedHeat, adjustedCool, request.mode);
   }

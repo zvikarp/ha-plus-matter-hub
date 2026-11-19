@@ -48,7 +48,7 @@ export class BridgeRegistry {
 
   refresh() {
     this._entities = pickBy(this.registry.entities, (entity) => {
-      const device = this.registry.devices[entity.entity_id];
+      const device = this.registry.devices[entity.device_id];
       const isHidden = this.isHiddenOrDisabled(
         this.dataProvider.featureFlags ?? {},
         entity,
@@ -84,7 +84,7 @@ export class BridgeRegistry {
   private matchesFilter(
     filter: HomeAssistantFilter,
     entity: HomeAssistantEntityRegistry,
-    device: HomeAssistantDeviceRegistry,
+    device: HomeAssistantDeviceRegistry | undefined,
   ) {
     if (
       filter.include.length > 0 &&

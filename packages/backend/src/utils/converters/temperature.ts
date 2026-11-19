@@ -96,7 +96,10 @@ export class Temperature {
   }
 
   plus(amount: number, unit: TemperatureUnit) {
-    const convertedAmount = convertTemperature(amount, unit, this.unit);
+    // Convert the interval without applying the offset between temperature scales.
+    const convertedAmount =
+      convertTemperature(amount, unit, this.unit) -
+      convertTemperature(0, unit, this.unit);
     return new Temperature(this.value + convertedAmount, this.unit);
   }
 

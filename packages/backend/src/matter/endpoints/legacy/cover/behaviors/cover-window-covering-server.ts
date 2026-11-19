@@ -26,33 +26,29 @@ const adjustPosition = (position: number, agent: Agent) => {
   return percentValue;
 };
 
+const positionForState = (
+  position: number | null | undefined,
+  state: string,
+  agent: Agent,
+) => {
+  if (position != null) {
+    return adjustPosition(position, agent);
+  }
+  // These are Matter positions, so they do not depend on the HA inversion setting.
+  if (state === CoverDeviceState.open) return 0;
+  if (state === CoverDeviceState.closed) return 100;
+  return null;
+};
+
 const config: WindowCoveringConfig = {
-  getCurrentLiftPosition: (entity, agent) => {
-    let position = attributes(entity).current_position;
-    if (position == null) {
-      const coverState = entity.state as CoverDeviceState;
-      position =
-        coverState === CoverDeviceState.closed
-          ? 100
-          : coverState === CoverDeviceState.open
-            ? 0
-            : undefined;
-    }
-    return position == null ? null : adjustPosition(position, agent);
-  },
-  getCurrentTiltPosition: (entity, agent) => {
-    let position = attributes(entity).current_tilt_position;
-    if (position == null) {
-      const coverState = entity.state as CoverDeviceState;
-      position =
-        coverState === CoverDeviceState.closed
-          ? 100
-          : coverState === CoverDeviceState.open
-            ? 0
-            : undefined;
-    }
-    return position == null ? null : adjustPosition(position, agent);
-  },
+  getCurrentLiftPosition: (entity, agent) =>
+    positionForState(attributes(entity).current_position, entity.state, agent),
+  getCurrentTiltPosition: (entity, agent) =>
+    positionForState(
+      attributes(entity).current_tilt_position,
+      entity.state,
+      agent,
+    ),
   getMovementStatus: (entity) => {
     const coverState = entity.state as CoverDeviceState;
     return coverState === CoverDeviceState.opening
