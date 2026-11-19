@@ -1,5 +1,10 @@
-import { describe, expect, it } from "vitest";
-import { MINIMUM_DEADBAND_MATTER_UNITS } from "./thermostat-server.js";
+import { Thermostat } from "@matter/main/clusters";
+import { describe, expect, it, vi } from "vitest";
+import { Temperature } from "../../utils/converters/temperature.js";
+import {
+  MINIMUM_DEADBAND_MATTER_UNITS,
+  ThermostatServerBase,
+} from "./thermostat-server.js";
 
 // Test the constraint logic that was fixed
 describe("Thermostat deadband constraint logic", () => {
@@ -97,5 +102,49 @@ describe("Thermostat deadband constraint logic", () => {
     expect(minHeat).toBeLessThanOrEqual(minCool - deadband);
     expect(minCool).toBe(1800); // Clamped to 1600 + 200
     expect(maxCool).toBe(1800); // Clamped to 1600 + 200
+  });
+});
+
+describe("Matter relative thermostat commands", () => {
+  it.each([
+    [Thermostat.SetpointRaiseLowerMode.Heat, 10, 21, 25],
+    [Thermostat.SetpointRaiseLowerMode.Cool, -5, 20, 24.5],
+    [Thermostat.SetpointRaiseLowerMode.Both, 5, 20.5, 25.5],
+  ])("converts a signed adjustment in tenths of a degree for mode %s", (mode, amount, low, high) => {
+    const callAction = vi.fn();
+    const config = {
+      getTargetHeatingTemperature: () => Temperature.celsius(20),
+      getTargetCoolingTemperature: () => Temperature.celsius(25),
+      supportsTemperatureRange: () => true,
+      setTargetTemperatureRange: ({
+        low,
+        high,
+      }: {
+        low: Temperature;
+        high: Temperature;
+      }) => ({
+        action: "climate.set_temperature",
+        data: {
+          target_temp_low: low.celsius(),
+          target_temp_high: high.celsius(),
+        },
+      }),
+    };
+    const server = Object.defineProperties(
+      Object.create(ThermostatServerBase.prototype),
+      {
+        state: { value: { config } },
+        agent: {
+          value: { get: () => ({ entity: { state: {} }, callAction }) },
+        },
+      },
+    ) as ThermostatServerBase;
+
+    server.setpointRaiseLower({ mode, amount });
+
+    expect(callAction).toHaveBeenCalledWith({
+      action: "climate.set_temperature",
+      data: { target_temp_low: low, target_temp_high: high },
+    });
   });
 });

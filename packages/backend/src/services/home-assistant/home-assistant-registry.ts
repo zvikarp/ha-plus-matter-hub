@@ -4,8 +4,10 @@ import type {
   HomeAssistantEntityRegistry,
   HomeAssistantEntityState,
 } from "@ha-plus-matter-hub/common";
+import type { Logger } from "@matter/general";
 import { getStates } from "home-assistant-js-websocket";
 import { fromPairs, keyBy, keys, uniq, values } from "lodash-es";
+import type { LoggerService } from "../../core/app/logger.js";
 import { Service } from "../../core/ioc/service.js";
 import { getDeviceRegistry, getRegistry } from "./api/get-registry.js";
 import type {
@@ -19,6 +21,8 @@ export type HomeAssistantStates = Record<string, HomeAssistantEntityState>;
 
 export class HomeAssistantRegistry extends Service {
   private autoRefresh?: NodeJS.Timeout;
+  private refreshing = false;
+  private readonly log: Logger;
 
   private _devices: HomeAssistantDevices = {};
   get devices() {
@@ -36,10 +40,12 @@ export class HomeAssistantRegistry extends Service {
   }
 
   constructor(
+    logger: LoggerService,
     private readonly client: HomeAssistantClient,
     private readonly options: HomeAssistantClientProps,
   ) {
     super("HomeAssistantRegistry");
+    this.log = logger.get(this);
   }
 
   protected override async initialize(): Promise<void> {
@@ -50,13 +56,26 @@ export class HomeAssistantRegistry extends Service {
     this.disableAutoRefresh();
   }
 
-  enableAutoRefresh(onRefresh: () => void) {
+  enableAutoRefresh(onRefresh: () => void | Promise<void>) {
     this.disableAutoRefresh();
 
-    this.autoRefresh = setInterval(async () => {
-      await this.reload();
-      onRefresh();
+    const timer = setInterval(async () => {
+      if (this.refreshing || this.autoRefresh !== timer) {
+        return;
+      }
+      this.refreshing = true;
+      try {
+        await this.reload();
+        if (this.autoRefresh === timer) {
+          await onRefresh();
+        }
+      } catch (error) {
+        this.log.warn("Could not refresh Home Assistant devices", error);
+      } finally {
+        this.refreshing = false;
+      }
     }, this.options.refreshInterval * 1000);
+    this.autoRefresh = timer;
   }
 
   disableAutoRefresh() {
@@ -80,7 +99,13 @@ export class HomeAssistantRegistry extends Service {
 
     const entityIds = uniq(keys(entities).concat(keys(states)));
     const allEntities = keyBy(
-      entityIds.map((id) => entities[id] ?? { entity_id: id, device_id: id }),
+      entityIds.map(
+        (id) =>
+          entities[id] ?? {
+            entity_id: id,
+            device_id: mockDeviceId(id),
+          },
+      ),
       "entity_id",
     );
     const deviceIds = values(allEntities).map(
@@ -93,7 +118,7 @@ export class HomeAssistantRegistry extends Service {
       fromPairs(missingDeviceIds.map((d) => [d, { id: d }]));
 
     this._devices = { ...missingDevices, ...realDevices };
-    this._entities = entities;
+    this._entities = allEntities;
     this._states = states;
   }
 }
